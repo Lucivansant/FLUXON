@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard — Fluxon</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2210%22 fill=%22%23FBBF24%22/><text x=%2250%22 y=%2250%22 font-size=%2260%22 font-weight=%22bold%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%231A2E2E%22>F</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded bg-amber-400 flex items-center justify-center font-bold text-teal-800">F</div>
+          <div>
+            <div class="font-bold text-lg">Fluxon.Click</div>
+            <div class="text-xs text-gray-500">Plataforma para Eletricistas</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Menu de Navegação -->
+      <nav class="hidden lg:flex items-center gap-6">
+        <a href="index.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Calculadora</a>
+        <a href="clientes.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Clientes</a>
+        <a href="orcamentos.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Orçamentos</a>
+        <a href="dashboard.html" class="text-sm font-semibold text-teal-600 border-b-2 border-teal-600 pb-1">Dashboard</a>
+      </nav>
+
+      <div class="flex items-center gap-4 min-w-[150px] justify-end">
+        <div id="status-text" class="text-sm text-gray-600 hidden sm:block">Deslogado</div>
+        <div id="user-info" class="hidden items-center gap-3">
+          <button id="btn-logout" class="bg-amber-500 hover:bg-amber-600 text-gray-900 px-3 py-2 rounded">Sair</button>
+        </div>
+        <a href="index.html" id="auth-cta" class="text-sm text-gray-600">Faça login</a>
+      </div>
+    </div>
+  </header>
+  <div class="bg-white border-t lg:hidden">
+    <nav class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-center gap-6 text-sm">
+        <a href="index.html" class="font-medium text-gray-500 hover:text-teal-600">Calculadora</a>
+        <a href="clientes.html" class="font-medium text-gray-500 hover:text-teal-600">Clientes</a>
+        <a href="orcamentos.html" class="font-medium text-gray-500 hover:text-teal-600">Orçamentos</a>
+        <a href="dashboard.html" class="font-semibold text-teal-600">Dashboard</a>
+    </nav>
+  </div>
+
+  <main class="max-w-6xl mx-auto p-6">
+    
+    <!-- Conteúdo Bloqueado -->
+    <div id="locked" class="p-6 border-2 border-dashed border-gray-200 rounded text-center text-gray-600 bg-gray-50">
+      <h3 class="font-extrabold text-xl mb-3 text-gray-800">Seu Dashboard Personalizado</h3>
+      <p class="mb-6 text-gray-700">
+        Visualize métricas importantes do seu negócio, como faturamento, clientes e projetos em andamento, em um painel claro e objetivo.
+        É necessário estar logado para acessar esta funcionalidade.
+      </p>
+      <p class="text-lg font-bold text-teal-600">
+        <a href="index.html" class="underline hover:text-teal-700">Faça login ou crie uma conta</a> para começar.
+      </p>
+    </div>
+
+    <!-- Conteúdo da Página de Dashboard (visível após login) -->
+    <div id="app" class="hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="font-extrabold text-2xl">Visão Geral</h2>
+      </div>
+
+      <!-- Cards de Métricas Ilustrativas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-5 rounded-lg shadow border-l-4 border-teal-500">
+          <div class="text-sm text-gray-600">Total de Clientes</div>
+          <div id="metric-total-clients" class="text-3xl font-bold text-gray-800 mt-1">0</div>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow border-l-4 border-amber-500">
+          <div class="text-sm text-gray-600">Orçamentos Pendentes</div>
+          <div id="metric-pending-quotes" class="text-3xl font-bold text-gray-800 mt-1">0</div>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow border-l-4 border-green-500">
+          <div class="text-sm text-gray-600">Faturamento (Mês Atual)</div>
+          <div id="metric-monthly-revenue" class="text-3xl font-bold text-gray-800 mt-1">R$ 0,00</div>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow border-l-4 border-indigo-500">
+          <div class="text-sm text-gray-600">Projetos Aprovados</div>
+          <div id="metric-approved-projects" class="text-3xl font-bold text-gray-800 mt-1">0</div>
+        </div>
+      </div>
+
+      <!-- Lista de Projetos do Mês -->
+      <div class="bg-white p-6 rounded-lg shadow mt-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="font-bold text-xl text-gray-800">Projetos Aprovados no Mês</h3>
+          <div class="flex items-center gap-2">
+            <button id="btn-prev-month" class="p-1 rounded-full hover:bg-gray-100">&lt;</button>
+            <h4 id="calendar-month-year" class="font-semibold text-center w-32"></h4>
+            <button id="btn-next-month" class="p-1 rounded-full hover:bg-gray-100">&gt;</button>
+          </div>
+        </div>
+        <div id="projects-list" class="space-y-3">
+          <!-- Itens da lista serão gerados pelo JS -->
+        </div>
+      </div>
+
+
+    </div>
+  </main>
+
+<script>
+const SUPABASE_URL = 'https://mnehllsfvhmdqxdxyqle.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZWhsbHNmdmhtZHF4ZHh5cWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MzM3NTksImV4cCI6MjA3MjQwOTc1OX0.DVxpiIVVHqiSKZfZYJ8mXsoy3gMaOxI3O4N4fa5G-Xc';
+
+const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient : null;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+
+const el = {
+  statusText: document.getElementById('status-text'),
+  userInfo: document.getElementById('user-info'),
+  authCta: document.getElementById('auth-cta'),
+  btnLogout: document.getElementById('btn-logout'),
+  locked: document.getElementById('locked'),
+  app: document.getElementById('app'),
+  // Métricas
+  totalClients: document.getElementById('metric-total-clients'),
+  pendingQuotes: document.getElementById('metric-pending-quotes'),
+  monthlyRevenue: document.getElementById('metric-monthly-revenue'),
+  approvedProjects: document.getElementById('metric-approved-projects'),
+  // Calendário
+  projectsList: document.getElementById('projects-list'),
+  calendarMonthYear: document.getElementById('calendar-month-year'),
+  btnPrevMonth: document.getElementById('btn-prev-month'),
+  btnNextMonth: document.getElementById('btn-next-month'),
+};
+
+let displayedDate = new Date();
+
+async function loadDashboardMetrics() {
+  if (!currentUser) return;
+
+  // 1. Total de Clientes
+  const { count: clientCount, error: clientError } = await supabase
+    .from('clients')
+    .select('*', { count: 'exact', head: true });
+  if (!clientError) el.totalClients.textContent = clientCount;
+
+  // 2. Orçamentos Pendentes
+  const { count: pendingCount, error: pendingError } = await supabase
+    .from('quotes')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'Pendente');
+  if (!pendingError) el.pendingQuotes.textContent = pendingCount;
+
+  // 3. Projetos Aprovados (em andamento)
+  const { count: approvedCount, error: approvedError } = await supabase
+    .from('quotes')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'Aprovado');
+  if (!approvedError) el.approvedProjects.textContent = approvedCount;
+
+  // 4. Faturamento no Mês Atual (de orçamentos aprovados)
+  const now = new Date();
+  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
+
+  const { data: revenueData, error: revenueError, count: approvedCountCurrentMonth } = await supabase
+    .from('quotes')
+    .select('total_value, service_duration_hours')
+    .eq('status', 'Aprovado')
+    .gte('created_at', firstDayOfMonth)
+    .lte('created_at', lastDayOfMonth);
+
+  if (!revenueError) {
+    const totalRevenue = revenueData.reduce((sum, quote) => sum + quote.total_value, 0);
+    el.monthlyRevenue.textContent = totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+}
+
+async function renderProjectsList(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth(); // 0-11
+  const now = new Date();
+
+  const monthYearString = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  const capitalizedMonthYear = monthYearString.charAt(0).toUpperCase() + monthYearString.slice(1);
+
+  el.calendarMonthYear.textContent = capitalizedMonthYear.toUpperCase();
+
+  el.projectsList.innerHTML = '<div class="text-gray-500">Carregando projetos...</div>';
+
+  const firstDayOfMonth = new Date(year, month, 1);
+  const lastDayOfMonth = new Date(year, month + 1, 0);
+
+  // Busca orçamentos aprovados para o mês exibido
+  const { data: approvedQuotes, error } = await supabase
+    .from('quotes')
+    .select('service_date, total_value, title, service_duration_hours, clients ( name )')
+    .eq('status', 'Aprovado')
+    .gte('service_date', firstDayOfMonth.toISOString().split('T')[0])
+    .lte('service_date', lastDayOfMonth.toISOString().split('T')[0])
+    .order('service_date', { ascending: true });
+
+  if (error) {
+    el.projectsList.innerHTML = `<div class="text-red-500">Erro ao carregar projetos: ${error.message}</div>`;
+    return;
+  }
+
+  if (!approvedQuotes || approvedQuotes.length === 0) {
+    el.projectsList.innerHTML = '<div class="text-center text-gray-500 py-4">Nenhum projeto aprovado para este mês.</div>';
+    return;
+  }
+
+  el.projectsList.innerHTML = '';
+  approvedQuotes.forEach(quote => {
+    const formattedDate = new Date(quote.service_date).toLocaleDateString('pt-BR', { timeZone: 'UTC', day: '2-digit', month: '2-digit' });
+    const formattedValue = Number(quote.total_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const projectHTML = `
+      <div class="border-b p-3 flex justify-between items-center hover:bg-gray-50">
+        <div>
+          <span class="font-bold text-teal-700 mr-2">[${formattedDate}]</span>
+          <span class="font-semibold">${quote.title}</span>
+          <span class="text-sm text-gray-500 ml-2">- ${quote.clients?.name || 'Cliente não informado'}</span>
+        </div>
+        <div class="font-bold text-green-600">${formattedValue}</div>
+      </div>
+    `;
+    el.projectsList.insertAdjacentHTML('beforeend', projectHTML);
+  });
+}
+
+function setLoggedState(user) {
+  currentUser = user;
+  if (user) {
+    el.locked.classList.add('hidden');
+    el.app.classList.remove('hidden');
+    el.userInfo.classList.remove('hidden');
+    el.authCta.classList.add('hidden');
+    el.statusText.textContent = user.email.split('@')[0];
+    el.statusText.title = user.email;
+    loadDashboardMetrics();
+    renderProjectsList(displayedDate);
+  } else {
+    el.locked.classList.remove('hidden');
+    el.app.classList.add('hidden');
+    el.userInfo.classList.add('hidden');
+    el.authCta.classList.remove('hidden');
+    el.statusText.title = '';
+    el.statusText.textContent = 'Deslogado';
+  }
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+}
+
+// Event Listeners do Calendário
+el.btnPrevMonth.addEventListener('click', () => {
+  displayedDate.setMonth(displayedDate.getMonth() - 1);
+  renderProjectsList(displayedDate);
+});
+el.btnNextMonth.addEventListener('click', () => {
+  displayedDate.setMonth(displayedDate.getMonth() + 1);
+  renderProjectsList(displayedDate);
+});
+
+el.btnLogout.addEventListener('click', signOut);
+
+supabase.auth.onAuthStateChange((event, session) => setLoggedState(session?.user ?? null));
+(async function init() {
+  const { data } = await supabase.auth.getUser();
+  setLoggedState(data.user);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gestão de Orçamentos — Fluxon</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2210%22 fill=%22%23FBBF24%22/><text x=%2250%22 y=%2250%22 font-size=%2260%22 font-weight=%22bold%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%231A2E2E%22>F</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded bg-amber-400 flex items-center justify-center font-bold text-teal-800">F</div>
+          <div>
+            <div class="font-bold text-lg">Fluxon.Click</div>
+            <div class="text-xs text-gray-500">Plataforma para Eletricistas</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Menu de Navegação -->
+      <nav class="hidden lg:flex items-center gap-6">
+        <a href="index.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Calculadora</a>
+        <a href="clientes.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Clientes</a>
+        <a href="orcamentos.html" class="text-sm font-semibold text-teal-600 border-b-2 border-teal-600 pb-1">Orçamentos</a>
+        <a href="dashboard.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Dashboard</a>
+      </nav>
+
+      <div class="flex items-center gap-4 min-w-[150px] justify-end">
+        <div id="status-text" class="text-sm text-gray-600 hidden sm:block">Deslogado</div>
+        <div id="user-info" class="hidden items-center gap-3">
+          <button id="btn-logout" class="bg-amber-500 hover:bg-amber-600 text-gray-900 px-3 py-2 rounded">Sair</button>
+        </div>
+        <a href="index.html" id="auth-cta" class="text-sm text-gray-600">Faça login</a>
+      </div>
+    </div>
+  </header>
+  <div class="bg-white border-t lg:hidden">
+    <nav class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-center gap-6 text-sm">
+        <a href="index.html" class="font-medium text-gray-500 hover:text-teal-600">Calculadora</a>
+        <a href="clientes.html" class="font-medium text-gray-500 hover:text-teal-600">Clientes</a>
+        <a href="orcamentos.html" class="font-semibold text-teal-600">Orçamentos</a>
+        <a href="dashboard.html" class="font-medium text-gray-500 hover:text-teal-600">Dashboard</a>
+    </nav>
+  </div>
+
+  <main class="max-w-6xl mx-auto p-6">
+    
+    <!-- Conteúdo Bloqueado -->
+    <div id="locked" class="p-6 border-2 border-dashed border-gray-200 rounded text-center text-gray-600 bg-gray-50">
+      <h3 class="font-extrabold text-xl mb-3 text-gray-800">Gerencie seus Orçamentos</h3>
+      <p class="mb-6 text-gray-700">
+        Crie, envie e acompanhe o status dos seus orçamentos de forma profissional e centralizada.
+        É necessário estar logado para acessar esta funcionalidade.
+      </p>
+      <p class="text-lg font-bold text-teal-600">
+        <a href="index.html" class="underline hover:text-teal-700">Faça login ou crie uma conta</a> para começar.
+      </p>
+    </div>
+
+    <!-- Conteúdo da Página de Orçamentos (visível após login) -->
+    <div id="app" class="hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="font-extrabold text-2xl">Meus Orçamentos</h2>
+        <button id="add-quote-btn" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded">Criar Orçamento</button>
+      </div>
+
+      <!-- Lista de Orçamentos -->
+      <div id="quotes-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[40rem] overflow-y-auto p-2 -m-2">
+        <!-- Cards de orçamento serão inseridos aqui pelo JS -->
+      </div>
+      <div id="quotes-empty" class="hidden text-center py-8 text-gray-500">
+        Nenhum orçamento cadastrado ainda. Clique em "Criar Orçamento" para começar.
+      </div>
+    </div>
+  </main>
+
+  <div id="extra-content" class="hidden">
+    <!-- Seção do Construtor de Orçamento -->
+    <section class="max-w-6xl mx-auto p-6">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="font-extrabold text-2xl mb-4">Construtor de Orçamento Rápido</h2>
+        <p class="text-sm text-gray-600 mb-6">Clique nos serviços das tabelas abaixo para adicioná-los a este orçamento preliminar.</p>
+        
+        <div id="quote-builder-list" class="space-y-2 mb-4">
+          <div id="quote-builder-empty" class="text-center text-gray-500 py-4 border-2 border-dashed rounded-lg">
+            Nenhum serviço adicionado.
+          </div>
+          <!-- Itens do orçamento serão adicionados aqui -->
+        </div>
+
+        <div class="border-t pt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div class="text-center md:text-left">
+            <div class="text-sm text-gray-600">Valor Total Estimado</div>
+            <div id="quote-builder-total" class="text-3xl font-bold text-teal-700">R$ 0,00</div>
+          </div>
+          <div class="flex-grow">
+            <label for="quote-copy" class="text-sm font-medium">Descrição para o cliente (copie e cole):</label>
+            <textarea id="quote-copy" rows="6" class="w-full mt-1 text-xs border rounded p-2 bg-gray-50" readonly>Serviços a serem realizados...</textarea>
+          </div>
+          <button id="btn-use-for-quote" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded font-bold disabled:bg-gray-400" disabled>
+            Usar para Criar Orçamento
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção de Tabelas de Referência (Accordion) -->
+    <section class="max-w-6xl mx-auto p-6 mt-4 space-y-4">
+      <h2 class="text-3xl font-extrabold text-center mb-8">Tabelas de Referência de Preços</h2>
+      <p class="text-center text-gray-600 -mt-6 mb-8 max-w-2xl mx-auto">Estas tabelas contêm valores médios de mercado para diversos serviços. Clique em uma linha para adicionar o serviço e seu valor médio diretamente ao construtor de orçamentos acima.</p>
+
+      <!-- Accordion Item 1: Iluminação -->
+      <div class="accordion-item bg-white rounded-lg shadow overflow-hidden">
+        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
+          <h3 class="font-bold text-xl">Tabela de Referência: Serviços de Iluminação</h3>
+          <svg class="accordion-icon w-5 h-5 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <div class="accordion-content hidden">
+          <div class="px-6 pb-6">
+            <div class="overflow-x-auto overflow-y-auto max-h-72">
+              <table class="w-full text-sm text-left text-gray-600">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr><th scope="col" class="px-6 py-3">Serviço</th><th scope="col" class="px-6 py-3 text-right">Mínimo</th><th scope="col" class="px-6 py-3 text-right">Máximo</th><th scope="col" class="px-6 py-3 text-right">Médio</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Instalação de interruptor simples ou pulsador" data-price="55.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Instalação de interruptor simples ou pulsador</th><td class="px-6 py-4 text-right">R$ 45,00</td><td class="px-6 py-4 text-right">R$ 65,00</td><td class="px-6 py-4 text-right">R$ 55,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Interruptor Three-Way ou Four-Way" data-price="65.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Interruptor Three-Way ou Four-Way</th><td class="px-6 py-4 text-right">R$ 55,00</td><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 65,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Interruptor duplo ou bipolar" data-price="65.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Interruptor duplo ou bipolar</th><td class="px-6 py-4 text-right">R$ 55,00</td><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 65,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Interruptor e tomada (juntos)" data-price="65.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Interruptor e tomada (juntos)</th><td class="px-6 py-4 text-right">R$ 55,00</td><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 65,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Arandela, pendente ou spot comum" data-price="70.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Arandela, pendente ou spot comum</th><td class="px-6 py-4 text-right">R$ 60,00</td><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 70,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Lâmpada fluorescente ou LED tubular" data-price="70.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Lâmpada fluorescente ou LED tubular</th><td class="px-6 py-4 text-right">R$ 65,00</td><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 70,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Lustre simples ou luminária" data-price="90.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Lustre simples ou luminária</th><td class="px-6 py-4 text-right">R$ 85,00</td><td class="px-6 py-4 text-right">R$ 97,50</td><td class="px-6 py-4 text-right">R$ 90,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Lustre grande ou luminária" data-price="137.50"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Lustre grande ou luminária</th><td class="px-6 py-4 text-right">R$ 130,00</td><td class="px-6 py-4 text-right">R$ 145,00</td><td class="px-6 py-4 text-right">R$ 137,50</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Refletor de jardim" data-price="102.50"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Refletor de jardim</th><td class="px-6 py-4 text-right">R$ 95,00</td><td class="px-6 py-4 text-right">R$ 110,00</td><td class="px-6 py-4 text-right">R$ 102,50</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Refletor de poste comum" data-price="130.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Refletor de poste comum</th><td class="px-6 py-4 text-right">R$ 120,00</td><td class="px-6 py-4 text-right">R$ 140,00</td><td class="px-6 py-4 text-right">R$ 130,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Refletor de poste com lâmpada a vapor" data-price="130.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Refletor de poste com lâmpada a vapor</th><td class="px-6 py-4 text-right">R$ 120,00</td><td class="px-6 py-4 text-right">R$ 140,00</td><td class="px-6 py-4 text-right">R$ 130,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Reator de lâmpada a vapor" data-price="81.25"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Reator de lâmpada a vapor</th><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 87,50</td><td class="px-6 py-4 text-right">R$ 81,25</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Fotocélula ou sensor de presença" data-price="85.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Fotocélula ou sensor de presença</th><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 95,00</td><td class="px-6 py-4 text-right">R$ 85,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Refletor LED + fotocélula/sensor" data-price="75.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Refletor LED + fotocélula/sensor</th><td class="px-6 py-4 text-right">R$ 65,00</td><td class="px-6 py-4 text-right">R$ 85,00</td><td class="px-6 py-4 text-right">R$ 75,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Luminária de emergência sobrepor" data-price="85.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Luminária de emergência sobrepor</th><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 95,00</td><td class="px-6 py-4 text-right">R$ 85,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Luminária de emergência embutir" data-price="62.50"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Luminária de emergência embutir</th><td class="px-6 py-4 text-right">R$ 55,00</td><td class="px-6 py-4 text-right">R$ 70,00</td><td class="px-6 py-4 text-right">R$ 62,50</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Perfil de LED (metro linear)" data-price="160.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Perfil de LED (metro linear)</th><td class="px-6 py-4 text-right">R$ 150,00</td><td class="px-6 py-4 text-right">R$ 170,00</td><td class="px-6 py-4 text-right">R$ 160,00</td></tr>
+                  <tr class="service-row bg-white hover:bg-gray-50 cursor-pointer" data-service="Luminária tubular ou troca reator por LED" data-price="82.50"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Luminária tubular ou troca reator por LED</th><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 90,00</td><td class="px-6 py-4 text-right">R$ 82,50</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion Item 2: Pontos de Utilização -->
+      <div class="accordion-item bg-white rounded-lg shadow overflow-hidden">
+        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
+          <h3 class="font-bold text-xl">⚡ Tabela de Referência: Pontos de Utilização</h3>
+          <svg class="accordion-icon w-5 h-5 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <div class="accordion-content hidden">
+          <div class="px-6 pb-6">
+            <div class="overflow-x-auto overflow-y-auto max-h-72">
+              <table class="w-full text-sm text-left text-gray-600">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr><th scope="col" class="px-6 py-3">Serviço</th><th scope="col" class="px-6 py-3 text-right">Mínimo</th><th scope="col" class="px-6 py-3 text-right">Máximo</th><th scope="col" class="px-6 py-3 text-right">Médio</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Tomada simples" data-price="45.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Tomada simples</th><td class="px-6 py-4 text-right">R$ 35,00</td><td class="px-6 py-4 text-right">R$ 55,00</td><td class="px-6 py-4 text-right">R$ 45,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Tomada industrial (3P+T)" data-price="105.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Tomada industrial (3P+T)</th><td class="px-6 py-4 text-right">R$ 85,00</td><td class="px-6 py-4 text-right">R$ 125,00</td><td class="px-6 py-4 text-right">R$ 105,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Ventilador de teto" data-price="150.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Ventilador de teto</th><td class="px-6 py-4 text-right">R$ 130,00</td><td class="px-6 py-4 text-right">R$ 170,00</td><td class="px-6 py-4 text-right">R$ 150,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Chuveiro elétrico" data-price="95.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Chuveiro elétrico</th><td class="px-6 py-4 text-right">R$ 85,00</td><td class="px-6 py-4 text-right">R$ 105,00</td><td class="px-6 py-4 text-right">R$ 95,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Interfone 1 chamada" data-price="175.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Interfone 1 chamada</th><td class="px-6 py-4 text-right">R$ 140,00</td><td class="px-6 py-4 text-right">R$ 210,00</td><td class="px-6 py-4 text-right">R$ 175,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Vídeo porteiro" data-price="360.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Vídeo porteiro</th><td class="px-6 py-4 text-right">R$ 340,00</td><td class="px-6 py-4 text-right">R$ 380,00</td><td class="px-6 py-4 text-right">R$ 360,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Câmeras Wi-Fi (3 unid.)" data-price="462.50"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Câmeras Wi-Fi (3 unid.)</th><td class="px-6 py-4 text-right">R$ 400,00</td><td class="px-6 py-4 text-right">R$ 525,00</td><td class="px-6 py-4 text-right">R$ 462,50</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Portão eletrônico basculante" data-price="910.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Portão eletrônico basculante</th><td class="px-6 py-4 text-right">R$ 750,00</td><td class="px-6 py-4 text-right">R$ 1.070,00</td><td class="px-6 py-4 text-right">R$ 910,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Cerca elétrica (por metro)" data-price="2420.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Cerca elétrica (por metro)</th><td class="px-6 py-4 text-right">R$ 1.940,00</td><td class="px-6 py-4 text-right">R$ 2.900,00</td><td class="px-6 py-4 text-right">R$ 2.420,00</td></tr>
+                  <tr class="service-row bg-white hover:bg-gray-50 cursor-pointer" data-service="Aquecedor elétrico" data-price="300.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Aquecedor elétrico</th><td class="px-6 py-4 text-right">R$ 270,00</td><td class="px-6 py-4 text-right">R$ 330,00</td><td class="px-6 py-4 text-right">R$ 300,00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion Item 3: Quadros de Distribuição -->
+      <div class="accordion-item bg-white rounded-lg shadow overflow-hidden">
+        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
+          <h3 class="font-bold text-xl">⚙️ Tabela de Referência: Quadros de Distribuição</h3>
+          <svg class="accordion-icon w-5 h-5 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <div class="accordion-content hidden">
+          <div class="px-6 pb-6">
+            <div class="overflow-x-auto overflow-y-auto max-h-72">
+              <table class="w-full text-sm text-left text-gray-600">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr><th scope="col" class="px-6 py-3">Serviço</th><th scope="col" class="px-6 py-3 text-right">Mínimo</th><th scope="col" class="px-6 py-3 text-right">Máximo</th><th scope="col" class="px-6 py-3 text-right">Médio</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Disjuntor monofásico" data-price="55.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Disjuntor monofásico</th><td class="px-6 py-4 text-right">R$ 45,00</td><td class="px-6 py-4 text-right">R$ 65,00</td><td class="px-6 py-4 text-right">R$ 55,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Disjuntor bifásico" data-price="75.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Disjuntor bifásico</th><td class="px-6 py-4 text-right">R$ 65,00</td><td class="px-6 py-4 text-right">R$ 85,00</td><td class="px-6 py-4 text-right">R$ 75,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Disjuntor trifásico" data-price="110.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Disjuntor trifásico</th><td class="px-6 py-4 text-right">R$ 100,00</td><td class="px-6 py-4 text-right">R$ 120,00</td><td class="px-6 py-4 text-right">R$ 110,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Instalação de IDR" data-price="140.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Instalação de IDR</th><td class="px-6 py-4 text-right">R$ 120,00</td><td class="px-6 py-4 text-right">R$ 160,00</td><td class="px-6 py-4 text-right">R$ 140,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Instalação de DPS" data-price="120.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Instalação de DPS</th><td class="px-6 py-4 text-right">R$ 105,00</td><td class="px-6 py-4 text-right">R$ 135,00</td><td class="px-6 py-4 text-right">R$ 120,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Haste de aterramento" data-price="195.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Haste de aterramento</th><td class="px-6 py-4 text-right">R$ 175,00</td><td class="px-6 py-4 text-right">R$ 215,00</td><td class="px-6 py-4 text-right">R$ 195,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="QDC 6 circuitos" data-price="507.50"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">QDC 6 circuitos</th><td class="px-6 py-4 text-right">R$ 495,00</td><td class="px-6 py-4 text-right">R$ 520,00</td><td class="px-6 py-4 text-right">R$ 507,50</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="QDC 12 circuitos" data-price="762.50"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">QDC 12 circuitos</th><td class="px-6 py-4 text-right">R$ 750,00</td><td class="px-6 py-4 text-right">R$ 775,00</td><td class="px-6 py-4 text-right">R$ 762,50</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="QDC 18 circuitos" data-price="952.50"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">QDC 18 circuitos</th><td class="px-6 py-4 text-right">R$ 940,00</td><td class="px-6 py-4 text-right">R$ 965,00</td><td class="px-6 py-4 text-right">R$ 952,50</td></tr>
+                  <tr class="service-row bg-white hover:bg-gray-50 cursor-pointer" data-service="QDC 24 circuitos" data-price="1275.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">QDC 24 circuitos</th><td class="px-6 py-4 text-right">R$ 1.260,00</td><td class="px-6 py-4 text-right">R$ 1.290,00</td><td class="px-6 py-4 text-right">R$ 1.275,00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion Item 4: Padrão de Entrada -->
+      <div class="accordion-item bg-white rounded-lg shadow overflow-hidden">
+        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
+          <h3 class="font-bold text-xl">⚙️ Tabela de Referência: Padrão de Entrada</h3>
+          <svg class="accordion-icon w-5 h-5 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <div class="accordion-content hidden">
+          <div class="px-6 pb-6">
+            <div class="overflow-x-auto overflow-y-auto max-h-72">
+              <table class="w-full text-sm text-left text-gray-600">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr><th scope="col" class="px-6 py-3">Serviço</th><th scope="col" class="px-6 py-3 text-right">Mínimo</th><th scope="col" class="px-6 py-3 text-right">Máximo</th><th scope="col" class="px-6 py-3 text-right">Médio</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Medidor monofásico" data-price="1390.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Medidor monofásico</th><td class="px-6 py-4 text-right">R$ 1.080,00</td><td class="px-6 py-4 text-right">R$ 1.700,00</td><td class="px-6 py-4 text-right">R$ 1.390,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Medidor bifásico" data-price="1615.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Medidor bifásico</th><td class="px-6 py-4 text-right">R$ 1.290,00</td><td class="px-6 py-4 text-right">R$ 1.940,00</td><td class="px-6 py-4 text-right">R$ 1.615,00</td></tr>
+                  <tr class="service-row bg-white hover:bg-gray-50 cursor-pointer" data-service="Medidor trifásico" data-price="1825.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Medidor trifásico</th><td class="px-6 py-4 text-right">R$ 1.500,00</td><td class="px-6 py-4 text-right">R$ 2.150,00</td><td class="px-6 py-4 text-right">R$ 1.825,00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion Item 5: Automação Residencial -->
+      <div class="accordion-item bg-white rounded-lg shadow overflow-hidden">
+        <button class="accordion-header flex justify-between items-center w-full p-6 text-left">
+          <h3 class="font-bold text-xl">🧠 Tabela de Referência: Automação Residencial</h3>
+          <svg class="accordion-icon w-5 h-5 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <div class="accordion-content hidden">
+          <div class="px-6 pb-6">
+            <div class="overflow-x-auto overflow-y-auto max-h-72">
+              <table class="w-full text-sm text-left text-gray-600">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr><th scope="col" class="px-6 py-3">Serviço</th><th scope="col" class="px-6 py-3 text-right">Mínimo</th><th scope="col" class="px-6 py-3 text-right">Máximo</th><th scope="col" class="px-6 py-3 text-right">Médio</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Interruptor inteligente" data-price="130.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Interruptor inteligente</th><td class="px-6 py-4 text-right">R$ 110,00</td><td class="px-6 py-4 text-right">R$ 160,00</td><td class="px-6 py-4 text-right">R$ 130,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Mini relé interruptor" data-price="215.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Mini relé interruptor</th><td class="px-6 py-4 text-right">R$ 160,00</td><td class="px-6 py-4 text-right">R$ 270,00</td><td class="px-6 py-4 text-right">R$ 215,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Relé de impulso" data-price="200.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Relé de impulso</th><td class="px-6 py-4 text-right">R$ 130,00</td><td class="px-6 py-4 text-right">R$ 270,00</td><td class="px-6 py-4 text-right">R$ 200,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Relé dimmer" data-price="215.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Relé dimmer</th><td class="px-6 py-4 text-right">R$ 160,00</td><td class="px-6 py-4 text-right">R$ 270,00</td><td class="px-6 py-4 text-right">R$ 215,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Controle remoto universal" data-price="165.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Controle remoto universal</th><td class="px-6 py-4 text-right">R$ 110,00</td><td class="px-6 py-4 text-right">R$ 220,00</td><td class="px-6 py-4 text-right">R$ 165,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Assistente virtual" data-price="160.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Assistente virtual</th><td class="px-6 py-4 text-right">R$ 110,00</td><td class="px-6 py-4 text-right">R$ 210,00</td><td class="px-6 py-4 text-right">R$ 160,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Tomada inteligente" data-price="100.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Tomada inteligente</th><td class="px-6 py-4 text-right">R$ 75,00</td><td class="px-6 py-4 text-right">R$ 125,00</td><td class="px-6 py-4 text-right">R$ 100,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Mini relé persiana" data-price="215.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Mini relé persiana</th><td class="px-6 py-4 text-right">R$ 160,00</td><td class="px-6 py-4 text-right">R$ 270,00</td><td class="px-6 py-4 text-right">R$ 215,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Hub" data-price="190.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Hub</th><td class="px-6 py-4 text-right">R$ 160,00</td><td class="px-6 py-4 text-right">R$ 220,00</td><td class="px-6 py-4 text-right">R$ 190,00</td></tr>
+                  <tr class="service-row bg-white border-b hover:bg-gray-50 cursor-pointer" data-service="Roteador" data-price="190.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Roteador</th><td class="px-6 py-4 text-right">R$ 110,00</td><td class="px-6 py-4 text-right">R$ 270,00</td><td class="px-6 py-4 text-right">R$ 190,00</td></tr>
+                  <tr class="service-row bg-white hover:bg-gray-50 cursor-pointer" data-service="Fechadura inteligente" data-price="290.00"><th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Fechadura inteligente</th><td class="px-6 py-4 text-right">R$ 210,00</td><td class="px-6 py-4 text-right">R$ 370,00</td><td class="px-6 py-4 text-right">R$ 290,00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- Modal para Adicionar Orçamento -->
+  <div id="quote-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+      <div class="flex justify-between items-center pb-3 border-b">
+        <h3 class="text-2xl font-bold">Criar Novo Orçamento</h3>
+        <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+      </div>
+      <div class="mt-5">
+        <form id="add-quote-form" class="space-y-4">
+          <div>
+            <label for="quote-client" class="block text-sm font-medium text-gray-700">Cliente</label>
+            <select id="quote-client" name="quote-client" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+              <!-- Opções de cliente serão inseridas aqui -->
+            </select>
+          </div>
+          <div>
+            <label for="quote-title" class="block text-sm font-medium text-gray-700">Título do Orçamento</label>
+            <input type="text" id="quote-title" name="quote-title" required placeholder="Ex: Instalação elétrica residência" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+          <div>
+            <label for="quote-value" class="block text-sm font-medium text-gray-700">Valor Total (R$)</label>
+            <input type="number" id="quote-value" name="quote-value" required step="0.01" placeholder="1500.00" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+          <div>
+            <label for="quote-date" class="block text-sm font-medium text-gray-700">Data do Serviço</label>
+            <input type="date" id="quote-date" name="quote-date" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+          <div>
+            <div class="flex justify-between items-center">
+              <label for="quote-duration" class="block text-sm font-medium text-gray-700">Duração Estimada (horas)</label>
+            </div>
+            <input type="number" id="quote-duration" name="quote-duration" required step="0.5" placeholder="8" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+
+          <div class="pt-4 flex justify-end gap-3">
+            <button type="button" id="cancel-modal-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">Salvar Orçamento</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+const SUPABASE_URL = 'https://mnehllsfvhmdqxdxyqle.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZWhsbHNmdmhtZHF4ZHh5cWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MzM3NTksImV4cCI6MjA3MjQwOTc1OX0.DVxpiIVVHqiSKZfZYJ8mXsoy3gMaOxI3O4N4fa5G-Xc';
+
+const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient : null;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+
+const el = {
+  statusText: document.getElementById('status-text'),
+  userInfo: document.getElementById('user-info'),
+  authCta: document.getElementById('auth-cta'),
+  btnLogout: document.getElementById('btn-logout'),
+  locked: document.getElementById('locked'),
+  app: document.getElementById('app'),
+  // Elementos da página de orçamentos
+  addQuoteBtn: document.getElementById('add-quote-btn'),
+  quoteModal: document.getElementById('quote-modal'),
+  closeModalBtn: document.getElementById('close-modal-btn'),
+  cancelModalBtn: document.getElementById('cancel-modal-btn'),
+  addQuoteForm: document.getElementById('add-quote-form'),
+  quotesList: document.getElementById('quotes-list'),
+  quotesEmpty: document.getElementById('quotes-empty'),
+  // Construtor de Orçamento
+  extraContent: document.getElementById('extra-content'),
+  quoteBuilderList: document.getElementById('quote-builder-list'),
+  quoteBuilderEmpty: document.getElementById('quote-builder-empty'),
+  quoteBuilderTotal: document.getElementById('quote-builder-total'),
+  quoteCopy: document.getElementById('quote-copy'),
+  btnUseForQuote: document.getElementById('btn-use-for-quote'),
+  quoteTitleInput: document.getElementById('quote-title'),
+  quoteValueInput: document.getElementById('quote-value'),
+};
+
+const statusStyles = {
+  'Pendente': { border: 'border-amber-500', bg: 'bg-amber-100', text: 'text-amber-800' },
+  'Aprovado': { border: 'border-green-500', bg: 'bg-green-100', text: 'text-green-800' },
+  'Recusado': { border: 'border-red-500', bg: 'bg-red-100', text: 'text-red-800' },
+};
+
+let quoteBuilderItems = [];
+
+function toggleModal(show) {
+  el.quoteModal.classList.toggle('hidden', !show);
+  if (show) loadClientsForDropdown();
+}
+
+async function loadClientsForDropdown() {
+  const select = document.getElementById('quote-client');
+  select.innerHTML = '<option value="">Carregando clientes...</option>';
+
+  const { data: clients, error } = await supabase
+    .from('clients')
+    .select('id, name')
+    .order('name');
+
+  if (error) {
+    select.innerHTML = '<option value="">Erro ao carregar</option>';
+    return;
+  }
+
+  if (clients.length === 0) {
+    select.innerHTML = '<option value="">Nenhum cliente cadastrado</option>';
+    return;
+  }
+
+  select.innerHTML = '<option value="">Selecione um cliente</option>';
+  clients.forEach(client => {
+    select.innerHTML += `<option value="${client.id}">${client.name}</option>`;
+  });
+
+}
+
+async function loadQuotes() {
+  if (!currentUser) return;
+
+  const { data: quotes, error } = await supabase
+    .from('quotes')
+    .select(`
+      id, title, total_value, status, created_at, description,
+      clients ( name )
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    alert('Erro ao carregar orçamentos: ' + error.message);
+    return;
+  }
+  renderQuotes(quotes);
+}
+
+function renderQuotes(quotes) {
+  el.quotesList.innerHTML = '';
+  el.quotesEmpty.classList.toggle('hidden', quotes.length > 0);
+
+  quotes.forEach(quote => {
+    const style = statusStyles[quote.status] || statusStyles['Pendente'];
+    const card = document.createElement('div');
+    card.className = `bg-white p-5 rounded-lg shadow border-l-4 ${style.border}`;
+    card.innerHTML = `
+      <div class="flex justify-between items-start">
+        <div>
+          <div class="font-bold text-gray-800">${quote.title}</div>
+          <div class="text-sm text-gray-500">Cliente: ${quote.clients?.name || 'N/A'}</div>
+          <p class="text-xs text-gray-500 mt-2 whitespace-pre-wrap">${quote.description || ''}</p>
+        </div>
+        <span class="text-xs font-medium ${style.bg} ${style.text} px-2 py-1 rounded-full">${quote.status}</span>
+      </div>
+      <div class="mt-4 pt-4 border-t flex justify-between items-center">
+        <div>
+          <div class="text-sm text-gray-600">Valor Total</div>
+          <div class="text-xl font-bold">R$ ${Number(quote.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+        </div>
+        <select class="status-select text-xs border-gray-300 rounded" data-id="${quote.id}">
+          <option value="Pendente" ${quote.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+          <option value="Aprovado" ${quote.status === 'Aprovado' ? 'selected' : ''}>Aprovado</option>
+          <option value="Recusado" ${quote.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
+        </select>
+      </div>
+    `;
+    el.quotesList.appendChild(card);
+  });
+
+  document.querySelectorAll('.status-select').forEach(select => {
+    select.addEventListener('change', handleStatusChange);
+  });
+}
+
+async function handleAddQuote(e) {
+  e.preventDefault();
+  try {
+    const formData = new FormData(el.addQuoteForm);
+    const quoteData = {
+      user_id: currentUser.id,
+      client_id: formData.get('quote-client'),
+      title: formData.get('quote-title'),
+      total_value: formData.get('quote-value'),
+      service_date: formData.get('quote-date'),
+      service_duration_hours: formData.get('quote-duration'),
+      description: el.quoteCopy.value,
+    };
+
+    // 1. Insere o orçamento principal e obtém o ID dele
+    const { data: newQuote, error: quoteError } = await supabase
+      .from('quotes')
+      .insert(quoteData)
+      .select()
+      .single();
+
+    if (quoteError) throw quoteError;
+
+    // 2. Prepara os itens do orçamento para inserção
+    const itemsToInsert = quoteBuilderItems.map(item => ({
+      quote_id: newQuote.id,
+      user_id: currentUser.id,
+      service_name: item.name,
+      price: item.price,
+    }));
+
+    // 3. Insere todos os itens na tabela 'quote_items'
+    const { error: itemsError } = await supabase.from('quote_items').insert(itemsToInsert);
+    if (itemsError) throw itemsError;
+
+    el.addQuoteForm.reset();
+    toggleModal(false);
+    // Limpa o construtor após o sucesso
+    quoteBuilderItems = [];
+    renderQuoteBuilder();
+
+    await loadQuotes();
+    
+  } catch (error) {
+    alert('Erro ao salvar orçamento: ' + error.message);
+  }
+}
+
+async function handleStatusChange(e) {
+  const quoteId = e.target.dataset.id;
+  const newStatus = e.target.value;
+
+  const { error } = await supabase
+    .from('quotes')
+    .update({ status: newStatus })
+    .eq('id', quoteId);
+
+  if (error) {
+    alert('Erro ao atualizar status: ' + error.message);
+  } else {
+    await loadQuotes(); // Recarrega para mostrar as cores atualizadas
+  }
+}
+
+function setLoggedState(user) {
+  currentUser = user;
+  if (user) {
+    el.locked.classList.add('hidden');
+    el.app.classList.remove('hidden');
+    el.userInfo.classList.remove('hidden');
+    el.authCta.classList.add('hidden');
+    el.statusText.textContent = user.email.split('@')[0];
+    el.statusText.title = user.email;
+    loadQuotes();
+    el.extraContent.classList.remove('hidden');
+  } else {
+    el.locked.classList.remove('hidden');
+    el.app.classList.add('hidden');
+    el.userInfo.classList.add('hidden');
+    el.authCta.classList.remove('hidden');
+    el.statusText.title = '';
+    el.statusText.textContent = 'Deslogado';
+    renderQuotes([]);
+    el.extraContent.classList.add('hidden');
+  }
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+}
+
+function renderQuoteBuilder() {
+  el.quoteBuilderList.innerHTML = '';
+  if (quoteBuilderItems.length === 0) {
+    el.quoteBuilderList.appendChild(el.quoteBuilderEmpty);
+    el.quoteBuilderEmpty.classList.remove('hidden');
+    el.btnUseForQuote.disabled = true;
+  } else {
+    el.quoteBuilderEmpty.classList.add('hidden');
+    quoteBuilderItems.forEach((item, index) => {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'flex justify-between items-center p-2 bg-gray-50 border rounded';
+      itemEl.innerHTML = `
+        <span class="text-sm">${item.name}</span>
+        <div class="flex items-center gap-4">
+          <span class="font-semibold text-sm">${item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+          <button class="remove-builder-item text-red-500 hover:text-red-700" data-index="${index}">&times;</button>
+        </div>
+      `;
+      el.quoteBuilderList.appendChild(itemEl);
+    });
+    el.btnUseForQuote.disabled = false;
+  }
+
+  const total = quoteBuilderItems.reduce((sum, item) => sum + item.price, 0);
+  el.quoteBuilderTotal.textContent = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  // Gera a "copy" para o cliente
+  const serviceList = quoteBuilderItems.map(item => `- ${item.name}`).join('\n');
+  const formattedTotal = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const copyText = `Olá! Agradeço pelo seu contato e pela oportunidade de apresentar esta proposta.
+
+Detalhes dos serviços a serem realizados:\n${serviceList}\n\nO valor total para a execução destes serviços (mão de obra) é de ${formattedTotal}.\n\nEste orçamento foi elaborado visando a máxima segurança e eficiência para sua instalação, utilizando as melhores práticas do mercado e garantindo a conformidade com as normas técnicas.\n\nFico à sua inteira disposição para esclarecer qualquer dúvida ou ajustar a proposta conforme sua necessidade.\n\nAtenciosamente,\n[Seu Nome]`;
+  el.quoteCopy.value = copyText;
+
+  // Adiciona listeners para os botões de remover
+  document.querySelectorAll('.remove-builder-item').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const index = parseInt(e.target.dataset.index, 10);
+      quoteBuilderItems.splice(index, 1);
+      renderQuoteBuilder();
+    });
+  });
+}
+
+function addServiceToBuilder(name, price) {
+  quoteBuilderItems.push({ name, price });
+  renderQuoteBuilder();
+}
+
+function useBuilderForQuote() {
+  if (quoteBuilderItems.length === 0) return;
+
+  const total = quoteBuilderItems.reduce((sum, item) => sum + item.price, 0);
+  const title = `Orçamento: ${quoteBuilderItems.map(i => i.name).slice(0, 2).join(', ')}${quoteBuilderItems.length > 2 ? '...' : ''}`;
+
+  toggleModal(true);
+
+  // Preenche o formulário do modal
+  el.quoteTitleInput.value = title;
+  el.quoteValueInput.value = total.toFixed(2);
+
+  // Não limpa o construtor aqui, apenas ao salvar o orçamento.
+  // quoteBuilderItems = [];
+  // renderQuoteBuilder();
+}
+
+// Event Listeners
+el.btnLogout.addEventListener('click', signOut);
+el.addQuoteBtn.addEventListener('click', () => toggleModal(true));
+el.closeModalBtn.addEventListener('click', () => toggleModal(false));
+el.cancelModalBtn.addEventListener('click', () => toggleModal(false));
+el.addQuoteForm.addEventListener('submit', handleAddQuote);
+
+el.btnUseForQuote.addEventListener('click', useBuilderForQuote);
+
+// Adiciona listeners para as linhas das tabelas de referência
+document.querySelectorAll('.service-row').forEach(row => {
+  row.addEventListener('click', () => {
+    const name = row.dataset.service;
+    const price = parseFloat(row.dataset.price);
+    addServiceToBuilder(name, price);
+  });
+});
+
+// Lógica do Accordion
+document.querySelectorAll('.accordion-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const content = header.nextElementSibling;
+    const icon = header.querySelector('.accordion-icon');
+
+    content.classList.toggle('hidden');
+    icon.classList.toggle('rotate-180');
+
+    // Opcional: Fechar outros accordions abertos
+    // document.querySelectorAll('.accordion-content').forEach(c => { if (c !== content) c.classList.add('hidden'); });
+    // document.querySelectorAll('.accordion-icon').forEach(i => { if (i !== icon) i.classList.remove('rotate-180'); });
+  });
+});
+
+// Inicialização
+supabase.auth.onAuthStateChange((event, session) => setLoggedState(session?.user ?? null));
+(async function init() {
+  const { data } = await supabase.auth.getUser();
+  setLoggedState(data.user);
+  renderQuoteBuilder(); // Inicializa o construtor vazio
+})();
+</script>
+</body>
+</html>

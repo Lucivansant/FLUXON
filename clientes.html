@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gestão de Clientes — Fluxon</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2210%22 fill=%22%23FBBF24%22/><text x=%2250%22 y=%2250%22 font-size=%2260%22 font-weight=%22bold%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%231A2E2E%22>F</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded bg-amber-400 flex items-center justify-center font-bold text-teal-800">F</div>
+          <div>
+            <div class="font-bold text-lg">Fluxon.Click</div>
+            <div class="text-xs text-gray-500">Plataforma para Eletricistas</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Menu de Navegação -->
+      <nav class="hidden lg:flex items-center gap-6">
+        <a href="index.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Calculadora</a>
+        <a href="clientes.html" class="text-sm font-semibold text-teal-600 border-b-2 border-teal-600 pb-1">Clientes</a>
+        <a href="orcamentos.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Orçamentos</a>
+        <a href="dashboard.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Dashboard</a>
+      </nav>
+
+      <div class="flex items-center gap-4 min-w-[150px] justify-end">
+        <div id="status-text" class="text-sm text-gray-600 hidden sm:block">Deslogado</div>
+        <div id="user-info" class="hidden items-center gap-3">
+          <button id="btn-logout" class="bg-amber-500 hover:bg-amber-600 text-gray-900 px-3 py-2 rounded">Sair</button>
+        </div>
+        <a href="index.html" id="auth-cta" class="text-sm text-gray-600">Faça login</a>
+      </div>
+    </div>
+  </header>
+  <div class="bg-white border-t lg:hidden">
+    <nav class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-center gap-6 text-sm">
+        <a href="index.html" class="font-medium text-gray-500 hover:text-teal-600">Calculadora</a>
+        <a href="clientes.html" class="font-semibold text-teal-600">Clientes</a>
+        <a href="orcamentos.html" class="font-medium text-gray-500 hover:text-teal-600">Orçamentos</a>
+        <a href="dashboard.html" class="font-medium text-gray-500 hover:text-teal-600">Dashboard</a>
+    </nav>
+  </div>
+
+  <main class="max-w-6xl mx-auto p-6">
+    
+    <!-- Conteúdo Bloqueado -->
+    <div id="locked" class="p-6 border-2 border-dashed border-gray-200 rounded text-center text-gray-600 bg-gray-50">
+      <h3 class="font-extrabold text-xl mb-3 text-gray-800">Gerencie seus Clientes</h3>
+      <p class="mb-6 text-gray-700">
+        Acesse sua lista de clientes, adicione novos contatos e organize seus projetos.
+        É necessário estar logado para acessar esta funcionalidade.
+      </p>
+      <p class="text-lg font-bold text-teal-600">
+        <a href="index.html" class="underline hover:text-teal-700">Faça login ou crie uma conta</a> para começar.
+      </p>
+    </div>
+
+    <!-- Conteúdo da Página de Clientes (visível após login) -->
+    <div id="app" class="hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="font-extrabold text-2xl">Meus Clientes</h2>
+        <button id="add-client-btn" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed">Adicionar Cliente</button>
+      </div>
+
+      <!-- Tabela de Clientes -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-600">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3">Nome</th>
+                <th scope="col" class="px-6 py-3">Contato</th>
+                <th scope="col" class="px-6 py-3">Observações</th>
+                <th scope="col" class="px-6 py-3 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="clients-table-body">
+              <!-- Linhas de clientes serão inseridas aqui pelo JS -->
+            </tbody>
+          </table>
+          <div id="clients-empty" class="hidden text-center py-8 text-gray-500">
+            Nenhum cliente cadastrado ainda. Clique em "Adicionar Cliente" para começar.
+          </div>
+          <div id="clients-limit-msg" class="hidden text-center py-4 text-sm text-amber-700 bg-amber-50 rounded-b-lg">
+            Você atingiu o limite de 10 clientes.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal para Adicionar Cliente -->
+  <div id="client-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+      <div class="flex justify-between items-center pb-3 border-b">
+        <h3 class="text-2xl font-bold">Adicionar Novo Cliente</h3>
+        <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+      </div>
+      <div class="mt-5">
+        <form id="add-client-form" class="space-y-4">
+          <div>
+            <label for="client-name" class="block text-sm font-medium text-gray-700">Nome do Cliente</label>
+            <input type="text" id="client-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+          <div>
+            <label for="client-contact" class="block text-sm font-medium text-gray-700">Contato (E-mail ou Telefone)</label>
+            <input type="text" id="client-contact" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+          <div>
+            <label for="client-notes" class="block text-sm font-medium text-gray-700">Observações</label>
+            <textarea id="client-notes" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"></textarea>
+          </div>
+          <div class="pt-4 flex justify-end gap-3">
+            <button type="button" id="cancel-modal-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">Salvar Cliente</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+const SUPABASE_URL = 'https://mnehllsfvhmdqxdxyqle.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZWhsbHNmdmhtZHF4ZHh5cWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MzM3NTksImV4cCI6MjA3MjQwOTc1OX0.DVxpiIVVHqiSKZfZYJ8mXsoy3gMaOxI3O4N4fa5G-Xc';
+
+const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient : null;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const el = {
+  statusText: document.getElementById('status-text'),
+  userInfo: document.getElementById('user-info'),
+  authCta: document.getElementById('auth-cta'),
+  btnLogout: document.getElementById('btn-logout'),
+  locked: document.getElementById('locked'),
+  app: document.getElementById('app'),
+  // Elementos da página de clientes
+  addClientBtn: document.getElementById('add-client-btn'),
+  clientModal: document.getElementById('client-modal'),
+  closeModalBtn: document.getElementById('close-modal-btn'),
+  cancelModalBtn: document.getElementById('cancel-modal-btn'),
+  addClientForm: document.getElementById('add-client-form'),
+  clientsTableBody: document.getElementById('clients-table-body'),
+  clientsEmpty: document.getElementById('clients-empty'),
+  clientsLimitMsg: document.getElementById('clients-limit-msg'),
+};
+
+let currentUser = null;
+const CLIENT_LIMIT = 10;
+
+function toggleModal(show) {
+  el.clientModal.classList.toggle('hidden', !show);
+}
+
+async function loadClients() {
+  if (!currentUser) return;
+
+  try {
+    const { data, error, count } = await supabase
+      .from('clients')
+      .select('*', { count: 'exact' })
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    renderClients(data);
+    checkClientLimit(count);
+
+  } catch (err) {
+    alert('Erro ao carregar clientes: ' + err.message);
+  }
+}
+
+function renderClients(clients) {
+  el.clientsTableBody.innerHTML = '';
+  if (!clients || clients.length === 0) {
+    el.clientsEmpty.classList.remove('hidden');
+    return;
+  }
+
+  el.clientsEmpty.classList.add('hidden');
+  clients.forEach(client => {
+    const row = document.createElement('tr');
+    row.className = 'bg-white border-b';
+    row.innerHTML = `
+      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${client.name}</th>
+      <td class="px-6 py-4">${client.contact || 'N/A'}</td>
+      <td class="px-6 py-4 text-gray-500">${client.notes || 'N/A'}</td>
+      <td class="px-6 py-4 text-right">
+        <button class="delete-client-btn font-medium text-red-600 hover:underline" data-id="${client.id}">Excluir</button>
+      </td>
+    `;
+    el.clientsTableBody.appendChild(row);
+  });
+
+  // Adiciona listeners para os botões de deletar
+  document.querySelectorAll('.delete-client-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const clientId = e.target.dataset.id;
+      if (confirm('Tem certeza que deseja excluir este cliente?')) {
+        await deleteClient(clientId);
+      }
+    });
+  });
+}
+
+async function handleAddClient(e) {
+  e.preventDefault();
+  if (!currentUser) return;
+
+  const name = document.getElementById('client-name').value.trim();
+  const contact = document.getElementById('client-contact').value.trim();
+  const notes = document.getElementById('client-notes').value.trim();
+
+  if (!name) {
+    alert('O nome do cliente é obrigatório.');
+    return;
+  }
+
+  try {
+    const { error } = await supabase.from('clients').insert([{
+      user_id: currentUser.id,
+      name,
+      contact,
+      notes
+    }]);
+
+    if (error) throw error;
+
+    el.addClientForm.reset();
+    toggleModal(false);
+    await loadClients();
+
+  } catch (err) {
+    alert('Erro ao salvar cliente: ' + err.message);
+  }
+}
+
+async function deleteClient(clientId) {
+  try {
+    const { error } = await supabase.from('clients').delete().eq('id', clientId);
+    if (error) throw error;
+    await loadClients();
+  } catch (err) {
+    alert('Erro ao excluir cliente: ' + err.message);
+  }
+}
+
+function checkClientLimit(count) {
+  if (count >= CLIENT_LIMIT) {
+    el.addClientBtn.disabled = true;
+    el.clientsLimitMsg.classList.remove('hidden');
+  } else {
+    el.addClientBtn.disabled = false;
+    el.clientsLimitMsg.classList.add('hidden');
+  }
+}
+
+function setLoggedState(user) {
+  currentUser = user;
+  if (user) {
+    el.locked.classList.add('hidden');
+    el.app.classList.remove('hidden');
+    el.userInfo.classList.remove('hidden');
+    el.authCta.classList.add('hidden');
+    el.statusText.textContent = user.email.split('@')[0];
+    el.statusText.title = user.email;
+    loadClients(); // Carrega os clientes quando o usuário está logado
+  } else {
+    el.locked.classList.remove('hidden');
+    el.app.classList.add('hidden');
+    el.userInfo.classList.add('hidden');
+    el.authCta.classList.remove('hidden');
+    el.statusText.title = '';
+    el.statusText.textContent = 'Deslogado';
+    renderClients([]); // Limpa a tabela
+    checkClientLimit(0); // Reseta o limite
+  }
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+}
+
+// Event Listeners
+el.btnLogout.addEventListener('click', signOut);
+el.addClientBtn.addEventListener('click', () => toggleModal(true));
+el.closeModalBtn.addEventListener('click', () => toggleModal(false));
+el.cancelModalBtn.addEventListener('click', () => toggleModal(false));
+el.addClientForm.addEventListener('submit', handleAddClient);
+
+// Inicialização
+supabase.auth.onAuthStateChange((event, session) => setLoggedState(session?.user ?? null));
+(async function init() {
+  const { data } = await supabase.auth.getUser();
+  setLoggedState(data.user);
+})();
+</script>
+</body>
+</html>

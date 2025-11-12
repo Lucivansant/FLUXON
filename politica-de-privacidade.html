@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Política de Privacidade — Fluxon</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2210%22 fill=%22%23FBBF24%22/><text x=%2250%22 y=%2250%22 font-size=%2260%22 font-weight=%22bold%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%231A2E2E%22>F</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded bg-amber-400 flex items-center justify-center font-bold text-teal-800">F</div>
+          <div>
+            <div class="font-bold text-lg">Fluxon.Click</div>
+            <div class="text-xs text-gray-500">Plataforma para Eletricistas</div>
+          </div>
+        </a>
+      </div>
+      <nav class="hidden lg:flex items-center gap-6">
+        <a href="index.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Calculadora</a>
+        <a href="clientes.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Clientes</a>
+        <a href="orcamentos.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Orçamentos</a>
+        <a href="dashboard.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Dashboard</a>
+      </nav>
+      <div class="flex items-center gap-4 min-w-[150px] justify-end">
+        <div id="status-text" class="text-sm text-gray-600 hidden sm:block">Deslogado</div>
+        <div id="user-info" class="hidden items-center gap-3">
+          <button id="btn-logout" class="bg-amber-500 hover:bg-amber-600 text-gray-900 px-3 py-2 rounded">Sair</button>
+        </div>
+        <a href="index.html" id="auth-cta" class="text-sm text-gray-600">Faça login</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto p-6 bg-white mt-8 rounded-lg shadow">
+    <div class="prose lg:prose-lg max-w-none">
+      <h1>Política de Privacidade</h1>
+      <p class="lead">Última atualização: [DATA ATUAL]</p>
+
+      <p>Bem-vindo à plataforma Fluxon.Click. Sua privacidade é importante para nós. Esta política de privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você utiliza nossa plataforma.</p>
+
+      <h2>1. Informações que Coletamos</h2>
+      <p>Podemos coletar as seguintes informações:</p>
+      <ul>
+        <li><strong>Informações de Conta:</strong> Quando você cria uma conta, coletamos seu endereço de e-mail e senha (armazenada de forma criptografada).</li>
+        <li><strong>Dados de Uso:</strong> Coletamos os dados que você gera ao usar a plataforma, incluindo cálculos da calculadora, informações de clientes, orçamentos e seus respectivos itens.</li>
+        <li><strong>Informações Técnicas:</strong> Podemos coletar informações sobre o dispositivo e navegador que você usa, seu endereço IP e outras informações técnicas para garantir o funcionamento e a segurança da plataforma.</li>
+      </ul>
+
+      <h2>2. Como Usamos Suas Informações</h2>
+      <p>Usamos as informações que coletamos para:</p>
+      <ul>
+        <li>Fornecer, operar e manter nossa plataforma.</li>
+        <li>Permitir que você acesse e utilize suas informações (cálculos, clientes, orçamentos) de forma segura.</li>
+        <li>Melhorar, personalizar e expandir nossa plataforma.</li>
+        <li>Entender e analisar como você usa nossa plataforma para otimizar a experiência do usuário.</li>
+        <li>Comunicar com você, seja diretamente ou através de um de nossos parceiros, incluindo para atendimento ao cliente, para fornecer atualizações e outras informações relacionadas à plataforma.</li>
+      </ul>
+
+      <h2>3. Compartilhamento de Informações</h2>
+      <p>Nós não compartilhamos suas informações pessoais com terceiros, exceto nas seguintes situações:</p>
+      <ul>
+        <li><strong>Com seu consentimento:</strong> Podemos compartilhar suas informações com seu consentimento explícito.</li>
+        <li><strong>Para cumprir a lei:</strong> Podemos divulgar suas informações se formos obrigados por lei ou em resposta a solicitações válidas de autoridades públicas.</li>
+        <li><strong>Provedores de Serviço:</strong> Usamos provedores de serviço de terceiros (como Supabase para banco de dados e autenticação) para nos ajudar a operar nossa plataforma. Esses provedores têm acesso às suas informações apenas para realizar tarefas em nosso nome e são obrigados a não divulgá-las ou usá-las para qualquer outra finalidade.</li>
+      </ul>
+
+      <h2>4. Segurança dos Dados</h2>
+      <p>A segurança de seus dados é uma prioridade. Implementamos um sistema de segurança em nível de linha (Row Level Security - RLS) que garante que cada usuário só possa acessar e manipular seus próprios dados. Nenhuma informação sua é visível para outros usuários.</p>
+
+      <h2>5. Seus Direitos</h2>
+      <p>Você tem o direito de acessar, corrigir ou excluir suas informações pessoais a qualquer momento. Você pode gerenciar seus clientes e orçamentos diretamente na plataforma. Para exclusão de conta, entre em contato conosco.</p>
+
+      <h2>6. Contato</h2>
+      <p>Se você tiver alguma dúvida sobre esta Política de Privacidade, entre em contato conosco pelo e-mail: [SEU E-MAIL DE CONTATO].</p>
+    </div>
+  </main>
+
+<script>
+const SUPABASE_URL = 'https://mnehllsfvhmdqxdxyqle.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZWhsbHNmdmhtZHF4ZHh5cWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MzM3NTksImV4cCI6MjA3MjQwOTc1OX0.DVxpiIVVHqiSKZfZYJ8mXsoy3gMaOxI3O4N4fa5G-Xc';
+
+const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient : null;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const el = {
+  statusText: document.getElementById('status-text'),
+  userInfo: document.getElementById('user-info'),
+  authCta: document.getElementById('auth-cta'),
+  btnLogout: document.getElementById('btn-logout'),
+};
+
+function setLoggedState(user) {
+  if (user) {
+    el.userInfo.classList.remove('hidden');
+    el.authCta.classList.add('hidden');
+    el.statusText.textContent = user.email.split('@')[0];
+    el.statusText.title = user.email;
+  } else {
+    el.userInfo.classList.add('hidden');
+    el.authCta.classList.remove('hidden');
+    el.statusText.title = '';
+    el.statusText.textContent = 'Deslogado';
+  }
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+  window.location.href = 'index.html';
+}
+
+el.btnLogout.addEventListener('click', signOut);
+supabase.auth.onAuthStateChange((event, session) => setLoggedState(session?.user ?? null));
+(async function init() {
+  const { data } = await supabase.auth.getUser();
+  setLoggedState(data.user);
+})();
+</script>
+<style>
+  .prose h1 { @apply text-4xl font-extrabold text-gray-900 mb-4; }
+  .prose h2 { @apply text-2xl font-bold text-gray-800 mt-8 mb-3; }
+  .prose p { @apply text-gray-700 leading-relaxed; }
+  .prose ul { @apply list-disc list-inside space-y-2; }
+  .prose li { @apply text-gray-700; }
+  .prose .lead { @apply text-lg text-gray-500; }
+</style>
+</body>
+</html>
