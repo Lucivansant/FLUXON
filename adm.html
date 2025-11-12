@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Fluxon</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2210%22 fill=%22%23FBBF24%22/><text x=%2250%22 y=%2250%22 font-size=%2260%22 font-weight=%22bold%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%231A2E2E%22>F</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+</head>
+<body class="bg-gray-800 text-gray-100 font-sans">
+
+  <!-- Tela de Login -->
+  <div id="admin-login-section" class="flex items-center justify-center min-h-screen">
+    <div class="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-sm">
+      <div class="flex items-center gap-3 mb-6 justify-center">
+        <div class="w-10 h-10 rounded bg-amber-400 flex items-center justify-center font-bold text-teal-800">F</div>
+        <h2 class="text-2xl font-extrabold text-white">Painel Administrativo</h2>
+      </div>
+
+      <div id="admin-msg" class="mb-4 hidden p-3 rounded text-sm"></div>
+
+      <form id="admin-login-form" class="space-y-4">
+        <div>
+          <label for="admin-username" class="text-sm block mb-1">Usuário</label>
+          <input id="admin-username" type="text" required class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500" />
+        </div>
+        <div>
+          <label for="admin-password" class="text-sm block mb-1">Senha</label>
+          <input id="admin-password" type="password" required class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500" />
+        </div>
+        <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard do Admin -->
+  <div id="admin-dashboard" class="hidden">
+    <header class="bg-gray-900 shadow">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <h1 class="text-xl font-bold">Dashboard Administrativo</h1>
+        <button id="admin-logout-btn" class="text-sm bg-red-600 hover:bg-red-700 px-3 py-1 rounded">Sair</button>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Total de Usuários -->
+        <div class="bg-gray-700 p-6 rounded-lg">
+          <div class="text-sm text-gray-400">Total de Usuários Cadastrados</div>
+          <div id="metric-total-users" class="text-4xl font-extrabold mt-1">0</div>
+        </div>
+        <!-- Total de Clientes -->
+        <div class="bg-gray-700 p-6 rounded-lg">
+          <div class="text-sm text-gray-400">Total de Clientes (todos os usuários)</div>
+          <div id="metric-total-clients" class="text-4xl font-extrabold mt-1">0</div>
+        </div>
+        <!-- Total de Orçamentos -->
+        <div class="bg-gray-700 p-6 rounded-lg">
+          <div class="text-sm text-gray-400">Total de Orçamentos Gerados</div>
+          <div id="metric-total-quotes" class="text-4xl font-extrabold mt-1">0</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+<script>
+const SUPABASE_URL = 'https://mnehllsfvhmdqxdxyqle.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZWhsbHNmdmhtZHF4ZHh5cWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MzM3NTksImV4cCI6MjA3MjQwOTc1OX0.DVxpiIVVHqiSKZfZYJ8mXsoy3gMaOxI3O4N4fa5G-Xc';
+
+const createClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient : (window.supabaseJs && window.supabaseJs.createClient) ? window.supabaseJs.createClient : null;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const el = {
+  loginSection: document.getElementById('admin-login-section'),
+  loginForm: document.getElementById('admin-login-form'),
+  dashboardSection: document.getElementById('admin-dashboard'),
+  logoutBtn: document.getElementById('admin-logout-btn'),
+  msg: document.getElementById('admin-msg'),
+  // Métricas
+  totalUsers: document.getElementById('metric-total-users'),
+  totalClients: document.getElementById('metric-total-clients'),
+  totalQuotes: document.getElementById('metric-total-quotes'),
+};
+
+function showAdminMsg(text, isError = false) {
+  el.msg.textContent = text;
+  el.msg.className = 'mb-4 p-3 rounded text-sm';
+  el.msg.classList.add(isError ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800');
+  el.msg.classList.remove('hidden');
+}
+
+async function handleAdminLogin(e) {
+  e.preventDefault();
+  const username = document.getElementById('admin-username').value;
+  const password = document.getElementById('admin-password').value;
+
+  try {
+    const { data, error } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('username', username)
+      .eq('password', password) // ATENÇÃO: Verificação insegura, ideal para protótipo.
+      .single();
+
+    if (error || !data) {
+      throw new Error('Usuário ou senha inválidos.');
+    }
+
+    // Login bem-sucedido
+    sessionStorage.setItem('isAdminLoggedIn', 'true');
+    showDashboard();
+
+  } catch (error) {
+    showAdminMsg(error.message, true);
+  }
+}
+
+function handleAdminLogout() {
+  sessionStorage.removeItem('isAdminLoggedIn');
+  el.loginSection.classList.remove('hidden');
+  el.dashboardSection.classList.add('hidden');
+}
+
+async function loadDashboardData() {
+  try {
+    // Chama a função RPC que criamos no Supabase para buscar as métricas
+    const { data, error } = await supabase.rpc('get_admin_dashboard_metrics');
+
+    if (error) {
+      throw error;
+    }
+
+    // Atualiza os elementos do dashboard com os dados retornados
+    el.totalUsers.textContent = data.total_users || 0;
+    el.totalClients.textContent = data.total_clients || 0;
+    el.totalQuotes.textContent = data.total_quotes || 0;
+
+  } catch (error) {
+    showAdminMsg('Erro ao carregar métricas: ' + error.message, true);
+  }
+}
+
+function showDashboard() {
+  el.loginSection.classList.add('hidden');
+  el.dashboardSection.classList.remove('hidden');
+  loadDashboardData();
+}
+
+function init() {
+  if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+    showDashboard();
+  } else {
+    el.loginSection.classList.remove('hidden');
+    el.dashboardSection.classList.add('hidden');
+  }
+}
+
+el.loginForm.addEventListener('submit', handleAdminLogin);
+el.logoutBtn.addEventListener('click', handleAdminLogout);
+
+init();
+</script>
+</body>
+</html>
