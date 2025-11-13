@@ -137,7 +137,8 @@
             <div>
               <label class="text-sm">Sistema</label>
               <select id="sel-system" class="w-full border rounded px-2 py-2">
-                <option value="single">Monofásico (loop)</option>
+                <option value="single">Monofásico (F+N)</option>
+                <option value="biphasic">Bifásico (F+F)</option>
                 <option value="three">Trifásico (3φ)</option>
               </select>
             </div>
@@ -240,7 +241,7 @@
           <!-- Resultado -->
           <div class="bg-gray-50 border p-4 rounded">
             <div id="result-area" class="text-gray-500">Resultados aparecerão aqui após clicar em "Calcular & Salvar".</div>
-            <div id="save-note" class="mt-3 text-xs text-gray-500"></div>
+            
           </div>
 
           <!-- Histórico -->
@@ -600,12 +601,18 @@ function computeResult() {
   let Ib = 0; // Corrente de Projeto
   const P = Number(el.inputPower.value);
   if (!P || P <= 0) return { error: 'Potência inválida' };
-  if (el.selSystem.value === 'single') Ib = P / (V * pf);
-  else Ib = P / (Math.sqrt(3) * V * pf);
+  
+  const systemType = el.selSystem.value;
+  if (systemType === 'three') {
+    Ib = P / (Math.sqrt(3) * V * pf);
+  } else { // Monofásico e Bifásico
+    Ib = P / (V * pf);
+  }
   
   // 1. CRITÉRIO DA CAPACIDADE DE CORRENTE
   const Iz = Ib / (FCT * FCA);
-  const numConductors = (el.selSystem.value === 'single') ? 2 : 3;
+  // Monofásico e Bifásico usam 2 condutores carregados. Trifásico usa 3.
+  const numConductors = (systemType === 'three') ? 3 : 2;
   const S_iz = findSectionByCurrent(Iz, method, numConductors, el.selMaterial.value);
   if (S_iz === null) {
     return { error: `Nenhum cabo padrão suporta a corrente corrigida (Iz = ${Iz.toFixed(2)} A) para o método ${method}. Verifique os parâmetros.` };
@@ -618,8 +625,10 @@ function computeResult() {
   const dV = (vdP / 100) * V;
 
   let S_vd = 0;
-  if (el.selSystem.value === 'single') S_vd = (2 * rho * L * Ib) / dV;
-  else S_vd = (Math.sqrt(3) * rho * L * Ib) / dV;
+  // Para queda de tensão, monofásico e bifásico (F+F) usam o fator 2 (ida e volta).
+  // Trifásico usa sqrt(3).
+  if (systemType === 'three') S_vd = (Math.sqrt(3) * rho * L * Ib) / dV;
+  else S_vd = (2 * rho * L * Ib) / dV;
 
   const S_vd_rounded = Number.isFinite(S_vd) ? Math.max(S_vd, 0.5) : null;
 
@@ -642,10 +651,10 @@ function computeResult() {
 
   // Encontra a queda de tensão real com o cabo escolhido
   let final_vd = 0; //
-  if (el.selSystem.value === 'single') {
-    final_vd = (2 * rho * L * Ib) / final_S;
-  } else {
+  if (systemType === 'three') {
     final_vd = (Math.sqrt(3) * rho * L * Ib) / final_S;
+  } else {
+    final_vd = (2 * rho * L * Ib) / final_S;
   }
   const final_vd_percent = (final_vd / V) * 100;
 
@@ -662,7 +671,7 @@ function computeResult() {
     voltage: V,
     length: L,
     vdPercent: vdP,
-    system: el.selSystem.value,
+    system: systemType,
     circuitType: circuitType,
     notes: `Cabo sugerido é o maior valor entre: Queda de Tensão (${S_vd_standard}mm²), Capacidade de Corrente (${S_iz}mm²) e Seção Mínima Normativa (${minGauge}mm²).`
   };

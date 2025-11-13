@@ -105,6 +105,29 @@
         </div>
       </div>
 
+      <!-- Seção de Feedback -->
+      <div class="bg-white p-6 rounded-lg shadow mt-6">
+        <h3 class="font-bold text-xl text-gray-800 mb-4">Avalie a Plataforma</h3>
+        <p class="text-sm text-gray-600 mb-4">Seu feedback é muito importante para nós! Deixe uma nota e um comentário sobre sua experiência.</p>
+        
+        <div id="feedback-msg" class="hidden p-3 rounded text-sm mb-4"></div>
+
+        <form id="feedback-form">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Sua nota:</label>
+            <div id="star-rating" class="flex items-center gap-1 text-3xl text-gray-300 cursor-pointer">
+              <span data-value="1" class="star hover:text-amber-400 transition-colors">★</span>
+              <span data-value="2" class="star hover:text-amber-400 transition-colors">★</span>
+              <span data-value="3" class="star hover:text-amber-400 transition-colors">★</span>
+              <span data-value="4" class="star hover:text-amber-400 transition-colors">★</span>
+              <span data-value="5" class="star hover:text-amber-400 transition-colors">★</span>
+            </div>
+            <input type="hidden" id="rating-value" value="0">
+          </div>
+          <textarea id="feedback-text" rows="4" placeholder="Deixe seu comentário aqui (opcional)..." class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"></textarea>
+          <button type="submit" id="btn-send-feedback" class="mt-4 bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded disabled:bg-gray-400">Enviar Avaliação</button>
+        </form>
+      </div>
 
     </div>
   </main>
@@ -135,6 +158,13 @@ const el = {
   calendarMonthYear: document.getElementById('calendar-month-year'),
   btnPrevMonth: document.getElementById('btn-prev-month'),
   btnNextMonth: document.getElementById('btn-next-month'),
+  // Feedback
+  feedbackForm: document.getElementById('feedback-form'),
+  starRatingContainer: document.getElementById('star-rating'),
+  ratingValueInput: document.getElementById('rating-value'),
+  feedbackText: document.getElementById('feedback-text'),
+  btnSendFeedback: document.getElementById('btn-send-feedback'),
+  feedbackMsg: document.getElementById('feedback-msg'),
 };
 
 let displayedDate = new Date();
@@ -232,6 +262,63 @@ async function renderProjectsList(date) {
   });
 }
 
+function handleStarRating() {
+  const stars = el.starRatingContainer.querySelectorAll('.star');
+  
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      const value = parseInt(star.dataset.value, 10);
+      el.ratingValueInput.value = value;
+      updateStars(value);
+    });
+
+    star.addEventListener('mouseover', () => {
+      const value = parseInt(star.dataset.value, 10);
+      updateStars(value, true);
+    });
+  });
+
+  el.starRatingContainer.addEventListener('mouseout', () => {
+    const selectedValue = parseInt(el.ratingValueInput.value, 10);
+    updateStars(selectedValue);
+  });
+}
+
+function updateStars(value, isHover = false) {
+  const stars = el.starRatingContainer.querySelectorAll('.star');
+  stars.forEach(star => {
+    if (parseInt(star.dataset.value, 10) <= value) {
+      star.classList.add('text-amber-400');
+      star.classList.remove('text-gray-300');
+    } else {
+      star.classList.remove('text-amber-400');
+      star.classList.add('text-gray-300');
+    }
+  });
+}
+
+async function handleSendFeedback(e) {
+  e.preventDefault();
+  const rating = parseInt(el.ratingValueInput.value, 10);
+  const feedback_text = el.feedbackText.value.trim();
+
+  if (rating === 0) {
+    showFeedbackMsg('Por favor, selecione uma nota de 1 a 5 estrelas.', true);
+    return;
+  }
+
+  el.btnSendFeedback.disabled = true;
+  el.btnSendFeedback.textContent = 'Enviando...';
+
+  const { error } = await supabase.from('feedbacks').insert({ rating, feedback_text });
+
+  el.btnSendFeedback.disabled = false;
+  el.btnSendFeedback.textContent = 'Enviar Avaliação';
+
+  if (error) showFeedbackMsg(`Erro ao enviar: ${error.message}`, true);
+  else showFeedbackMsg('Obrigado pelo seu feedback!', false);
+}
+
 function setLoggedState(user) {
   currentUser = user;
   if (user) {
@@ -243,6 +330,7 @@ function setLoggedState(user) {
     el.statusText.title = user.email;
     loadDashboardMetrics();
     renderProjectsList(displayedDate);
+    handleStarRating();
   } else {
     el.locked.classList.remove('hidden');
     el.app.classList.add('hidden');
@@ -251,6 +339,15 @@ function setLoggedState(user) {
     el.statusText.title = '';
     el.statusText.textContent = 'Deslogado';
   }
+}
+
+function showFeedbackMsg(text, isError) {
+  el.feedbackMsg.textContent = text;
+  el.feedbackMsg.className = 'p-3 rounded text-sm mb-4';
+  el.feedbackMsg.classList.add(isError ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800');
+  el.feedbackMsg.classList.remove('hidden');
+
+  setTimeout(() => el.feedbackMsg.classList.add('hidden'), 5000);
 }
 
 async function signOut() {
@@ -268,6 +365,7 @@ el.btnNextMonth.addEventListener('click', () => {
 });
 
 el.btnLogout.addEventListener('click', signOut);
+el.feedbackForm.addEventListener('submit', handleSendFeedback);
 
 supabase.auth.onAuthStateChange((event, session) => setLoggedState(session?.user ?? null));
 (async function init() {
