@@ -97,7 +97,6 @@ function updateUI() {
         el.btnSubmit.textContent = 'Criar Conta';
         el.toggleLink.textContent = 'Já tem uma conta? Faça login.';
     }
-    el.msg.classList.add('hidden');
 }
 
 async function handleSubmit(e) {
@@ -109,6 +108,7 @@ async function handleSubmit(e) {
     showMsg('Por favor, preencha e-mail e senha.', 'error');
     return;
   }
+  el.msg.classList.add('hidden'); // Esconde mensagens antigas
 
   el.btnSubmit.disabled = true;
   el.btnSubmit.textContent = 'Aguarde...';
