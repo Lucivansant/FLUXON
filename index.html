@@ -481,7 +481,6 @@ const el = {
   btnCalc: document.getElementById('btn-calc'),
   btnReset: document.getElementById('btn-reset'),
   resultArea: document.getElementById('result-area'),
-  saveNote: document.getElementById('save-note'),
   history: document.getElementById('history'),
   historyEmpty: document.getElementById('history-empty'),
 };
@@ -517,7 +516,6 @@ function setLoggedState(user) {
     el.accountUid.textContent = 'UID: ' + user.id;
     el.statusText.textContent = user.email.split('@')[0];
     el.statusText.title = user.email;
-    el.saveNote.textContent = 'Cálculos serão salvos na tabela `calculations` do Supabase.';
     loadHistory();
     featuresSection.classList.add('hidden');
     salesSection.classList.add('hidden');
@@ -531,7 +529,6 @@ function setLoggedState(user) {
     el.accountUid.textContent = '';
     el.statusText.title = '';
     el.statusText.textContent = 'Deslogado';
-    el.saveNote.textContent = '';
     el.resultArea.innerHTML = 'Resultados aparecerão aqui após clicar em "Calcular & Salvar".';
     el.history.innerHTML = '';
     el.historyEmpty.classList.remove('hidden');
