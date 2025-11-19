@@ -241,6 +241,8 @@ const el = {
   historyEmpty: document.getElementById('history-empty'),
 };
 
+const CALCULATION_LIMIT = 5; // Define o limite de cálculos salvos para o usuário
+
 function showMsg(text, type='info', targetElement = null) {
     // This is a placeholder for a more robust notification system if needed
     if (type === 'error') {
@@ -261,6 +263,7 @@ function setLoggedState(user) {
     el.statusText.textContent = user.email.split('@')[0];
     el.statusText.title = user.email;
     loadHistory();
+    checkCalculationLimit(0); // Inicializa o estado do botão (será atualizado por loadHistory)
   } else {
     el.locked.classList.remove('hidden');
     el.app.classList.add('hidden');
@@ -269,6 +272,7 @@ function setLoggedState(user) {
     el.statusText.title = '';
     el.statusText.textContent = 'Deslogado';
     el.resultArea.innerHTML = 'Resultados aparecerão aqui após clicar em "Calcular & Salvar".';
+    el.btnCalc.disabled = false; // Garante que o botão não fique desativado para usuários deslogados
     el.history.innerHTML = '';
     el.historyEmpty.classList.remove('hidden');
   }
@@ -404,6 +408,7 @@ async function loadHistory() {
       .limit(100);
     if (error) throw error;
     renderHistory(data || []);
+    checkCalculationLimit(data ? data.length : 0); // Verifica o limite após carregar o histórico
   } catch (err) {
     console.error('load history err', err);
     showMsg('Erro ao carregar histórico.', 'error');
@@ -417,6 +422,27 @@ async function deleteCalculation(id) {
     if (error) throw error;
     loadHistory();
   } catch (err) {
+    console.error('delete err', err);
+    showMsg('Erro ao remover cálculo.', 'error');
+  }
+}
+
+function checkCalculationLimit(currentCount) {
+  const limitMessage = `<div class="text-amber-600 font-semibold p-4 text-center">Você atingiu o limite de ${CALCULATION_LIMIT} cálculos salvos. Exclua um cálculo antigo para salvar um novo.</div>`;
+
+  if (currentCount >= CALCULATION_LIMIT) {
+    el.btnCalc.disabled = true;
+    el.btnCalc.textContent = `Limite de ${CALCULATION_LIMIT} cálculos atingido`;
+    // Só exibe a mensagem de limite se não houver um resultado de cálculo visível
+    if (!el.resultArea.innerHTML.includes("Corrente de Projeto (Ib)")) {
+        el.resultArea.innerHTML = limitMessage;
+    }
+  } else {
+    el.btnCalc.disabled = false;
+    el.btnCalc.textContent = 'Calcular & Salvar';
+    if (el.resultArea.innerHTML === limitMessage) { // Se a mensagem de limite estava visível, remove-a
+        el.resultArea.innerHTML = 'Resultados aparecerão aqui após clicar em "Calcular & Salvar".';
+    }
     console.error('delete err', err);
     showMsg('Erro ao remover cálculo.', 'error');
   }

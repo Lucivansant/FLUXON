@@ -68,15 +68,29 @@
     <div id="app" class="hidden">
       <div class="flex items-center justify-between mb-6">
         <h2 class="font-extrabold text-2xl">Meus Orçamentos</h2>
-        <button id="add-quote-btn" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded">Criar Orçamento</button>
+        <button id="add-quote-btn" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed">Criar Orçamento</button>
       </div>
 
-      <!-- Lista de Orçamentos -->
-      <div id="quotes-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[40rem] overflow-y-auto p-2 -m-2">
-        <!-- Cards de orçamento serão inseridos aqui pelo JS -->
-      </div>
-      <div id="quotes-empty" class="hidden text-center py-8 text-gray-500">
-        Nenhum orçamento cadastrado ainda. Clique em "Criar Orçamento" para começar.
+      <!-- Tabela de Orçamentos -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-600">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3">Cliente</th>
+                <th scope="col" class="px-6 py-3">Título</th>
+                <th scope="col" class="px-6 py-3">Valor</th>
+                <th scope="col" class="px-6 py-3">Status</th>
+                <th scope="col" class="px-6 py-3 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="quotes-table-body">
+              <!-- Linhas de orçamentos serão inseridas aqui pelo JS -->
+            </tbody>
+          </table>
+          <div id="quotes-empty" class="hidden text-center py-8 text-gray-500">Nenhum orçamento cadastrado ainda. Clique em "Criar Orçamento" para começar.</div>
+          <div id="quotes-limit-msg" class="hidden text-center py-4 text-sm text-amber-700 bg-amber-50 rounded-b-lg">Você atingiu o limite de 5 orçamentos no plano gratuito.</div>
+        </div>
       </div>
     </div>
   </main>
@@ -95,15 +109,7 @@
           <!-- Itens do orçamento serão adicionados aqui -->
         </div>
 
-        <div class="border-t pt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div class="text-center md:text-left">
-            <div class="text-sm text-gray-600">Valor Total Estimado</div>
-            <div id="quote-builder-total" class="text-3xl font-bold text-teal-700">R$ 0,00</div>
-          </div>
-          <div class="flex-grow">
-            <label for="quote-copy" class="text-sm font-medium">Descrição para o cliente (copie e cole):</label>
-            <textarea id="quote-copy" rows="6" class="w-full mt-1 text-xs border rounded p-2 bg-gray-50" readonly>Serviços a serem realizados...</textarea>
-          </div>
+        <div class="border-t pt-4 flex justify-end">
           <button id="btn-use-for-quote" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded font-bold disabled:bg-gray-400" disabled>
             Usar para Criar Orçamento
           </button>
@@ -343,12 +349,12 @@ const el = {
   addQuoteForm: document.getElementById('add-quote-form'),
   quotesList: document.getElementById('quotes-list'),
   quotesEmpty: document.getElementById('quotes-empty'),
+  quotesTableBody: document.getElementById('quotes-table-body'),
+  quotesLimitMsg: document.getElementById('quotes-limit-msg'),
   // Construtor de Orçamento
   extraContent: document.getElementById('extra-content'),
   quoteBuilderList: document.getElementById('quote-builder-list'),
   quoteBuilderEmpty: document.getElementById('quote-builder-empty'),
-  quoteBuilderTotal: document.getElementById('quote-builder-total'),
-  quoteCopy: document.getElementById('quote-copy'),
   btnUseForQuote: document.getElementById('btn-use-for-quote'),
   quoteTitleInput: document.getElementById('quote-title'),
   quoteValueInput: document.getElementById('quote-value'),
@@ -361,6 +367,7 @@ const statusStyles = {
 };
 
 let quoteBuilderItems = [];
+const QUOTE_LIMIT = 5;
 
 function toggleModal(show) {
   el.quoteModal.classList.toggle('hidden', !show);
@@ -405,35 +412,29 @@ async function loadQuotes() {
     .order('created_at', { ascending: false });
 
   if (error) {
-    alert('Erro ao carregar orçamentos: ' + error.message);
-    return;
+    throw error;
   }
   renderQuotes(quotes);
+  checkQuoteLimit(quotes ? quotes.length : 0);
+
 }
 
-function renderQuotes(quotes) {
-  el.quotesList.innerHTML = '';
+function renderQuotes(quotes = []) {
+  el.quotesTableBody.innerHTML = '';
   el.quotesEmpty.classList.toggle('hidden', quotes.length > 0);
 
-  quotes.forEach(quote => {
+  quotes.forEach((quote) => {
     const style = statusStyles[quote.status] || statusStyles['Pendente'];
-    const card = document.createElement('div');
-    card.className = `bg-white p-5 rounded-lg shadow border-l-4 ${style.border}`;
-    card.innerHTML = `
-      <div class="flex justify-between items-start">
-        <div>
-          <div class="font-bold text-gray-800">${quote.title}</div>
-          <div class="text-sm text-gray-500">Cliente: ${quote.clients?.name || 'N/A'}</div>
-          <p class="text-xs text-gray-500 mt-2 whitespace-pre-wrap">${quote.description || ''}</p>
-        </div>
+    const row = document.createElement('tr');
+    row.className = 'bg-white border-b';
+    row.innerHTML = `
+      <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${quote.clients?.name || 'N/A'}</td>
+      <td class="px-6 py-4">${quote.title}</td>
+      <td class="px-6 py-4 font-semibold">R$ ${Number(quote.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+      <td class="px-6 py-4">
         <span class="text-xs font-medium ${style.bg} ${style.text} px-2 py-1 rounded-full">${quote.status}</span>
-      </div>
-      <div class="mt-4 pt-4 border-t flex justify-between items-center">
-        <div>
-          <div class="text-sm text-gray-600">Valor Total</div>
-          <div class="text-xl font-bold">R$ ${Number(quote.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-        </div>
-        <div class="flex items-center gap-2">
+      </td>
+      <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
           <select class="status-select text-xs border-gray-300 rounded" data-id="${quote.id}">
             <option value="Pendente" ${quote.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
             <option value="Aprovado" ${quote.status === 'Aprovado' ? 'selected' : ''}>Aprovado</option>
@@ -442,17 +443,16 @@ function renderQuotes(quotes) {
           <button class="delete-quote-btn text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100" title="Excluir Orçamento" data-id="${quote.id}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
           </button>
-        </div>
-      </div>
+      </td>
     `;
-    el.quotesList.appendChild(card);
+    el.quotesTableBody.appendChild(row);
   });
 
-  document.querySelectorAll('.status-select').forEach(select => {
+  el.quotesTableBody.querySelectorAll('.status-select').forEach(select => {
     select.addEventListener('change', handleStatusChange);
   });
 
-  document.querySelectorAll('.delete-quote-btn').forEach(btn => {
+  el.quotesTableBody.querySelectorAll('.delete-quote-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const quoteId = e.currentTarget.dataset.id;
       if (confirm('Tem certeza que deseja excluir este orçamento? Esta ação não pode ser desfeita.')) {
@@ -464,6 +464,9 @@ function renderQuotes(quotes) {
 
 async function handleAddQuote(e) {
   e.preventDefault();
+  // Gera a descrição dinamicamente no momento do salvamento
+  const descriptionText = generateQuoteCopyText();
+
   try {
     const formData = new FormData(el.addQuoteForm);
     const quoteData = {
@@ -473,7 +476,7 @@ async function handleAddQuote(e) {
       total_value: formData.get('quote-value'),
       service_date: formData.get('quote-date'),
       service_duration_hours: formData.get('quote-duration'),
-      description: el.quoteCopy.value,
+      description: descriptionText,
     };
 
     // 1. Insere o orçamento principal e obtém o ID dele
@@ -536,6 +539,17 @@ async function deleteQuote(quoteId) {
   }
 }
 
+function checkQuoteLimit(count) {
+  if (count >= QUOTE_LIMIT) {
+    el.addQuoteBtn.disabled = true;
+    el.quotesLimitMsg.classList.remove('hidden');
+  } else {
+    el.addQuoteBtn.disabled = false;
+    el.quotesLimitMsg.classList.add('hidden');
+  }
+}
+
+
 function setLoggedState(user) {
   currentUser = user;
   if (user) {
@@ -586,25 +600,24 @@ function renderQuoteBuilder() {
     el.btnUseForQuote.disabled = false;
   }
 
-  const total = quoteBuilderItems.reduce((sum, item) => sum + item.price, 0);
-  el.quoteBuilderTotal.textContent = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-  // Gera a "copy" para o cliente
-  const serviceList = quoteBuilderItems.map(item => `- ${item.name}`).join('\n');
-  const formattedTotal = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  const copyText = `Olá! Agradeço pelo seu contato e pela oportunidade de apresentar esta proposta.
-
-Detalhes dos serviços a serem realizados:\n${serviceList}\n\nO valor total para a execução destes serviços (mão de obra) é de ${formattedTotal}.\n\nEste orçamento foi elaborado visando a máxima segurança e eficiência para sua instalação, utilizando as melhores práticas do mercado e garantindo a conformidade com as normas técnicas.\n\nFico à sua inteira disposição para esclarecer qualquer dúvida ou ajustar a proposta conforme sua necessidade.\n\nAtenciosamente,\n[Seu Nome]`;
-  el.quoteCopy.value = copyText;
-
   // Adiciona listeners para os botões de remover
   document.querySelectorAll('.remove-builder-item').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const index = parseInt(e.target.dataset.index, 10);
+      const index = parseInt(e.currentTarget.dataset.index, 10);
       quoteBuilderItems.splice(index, 1);
       renderQuoteBuilder();
     });
   });
+}
+
+function generateQuoteCopyText() {
+  // Gera a "copy" para o cliente
+  const serviceList = quoteBuilderItems.map(item => `- ${item.name}`).join('\n');
+  const total = quoteBuilderItems.reduce((sum, item) => sum + item.price, 0);
+  const formattedTotal = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  
+  return `Olá! Agradeço pelo seu contato e pela oportunidade de apresentar esta proposta.
+Detalhes dos serviços a serem realizados:\n${serviceList}\n\nO valor total para a execução destes serviços (mão de obra) é de ${formattedTotal}.\n\nEste orçamento foi elaborado visando a máxima segurança e eficiência para sua instalação, utilizando as melhores práticas do mercado e garantindo a conformidade com as normas técnicas.\n\nFico à sua inteira disposição para esclarecer qualquer dúvida ou ajustar a proposta conforme sua necessidade.\n\nAtenciosamente,\n[Seu Nome]`;
 }
 
 function addServiceToBuilder(name, price) {

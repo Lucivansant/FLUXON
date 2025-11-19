@@ -91,7 +91,7 @@
             Nenhum cliente cadastrado ainda. Clique em "Adicionar Cliente" para começar.
           </div>
           <div id="clients-limit-msg" class="hidden text-center py-4 text-sm text-amber-700 bg-amber-50 rounded-b-lg">
-            Você atingiu o limite de 10 clientes.
+            Você atingiu o limite de 5 clientes no plano gratuito. Exclua um cliente para adicionar outro.
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@ const el = {
 };
 
 let currentUser = null;
-const CLIENT_LIMIT = 10;
+const CLIENT_LIMIT = 5;
 
 function toggleModal(show) {
   el.clientModal.classList.toggle('hidden', !show);
