@@ -50,17 +50,22 @@
     <!-- Hero Section -->
     <section class="bg-white">
       <div class="max-w-6xl mx-auto px-6 py-24 text-center">
-        <h1 class="text-4xl lg:text-6xl font-extrabold text-gray-900">
+        <h1 class="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight max-w-4xl mx-auto">
           Otimize seu trabalho. Impressione seus clientes.
         </h1>
         <p class="mt-6 text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto">
-          A plataforma completa para o eletricista profissional. Calcule, orce, gerencie clientes e projetos em um só lugar.
+          Calcule projetos pela NBR 5410 e crie orçamentos profissionais em minutos.
         </p>
         <div class="mt-10">
-          <a href="login.html?action=signup" class="bg-teal-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-teal-700 transition-colors">
-            Crie sua Conta Gratuita Agora
+          <!-- 
+            IMPORTANTE: Ao carregar a página /calculadora via este botão, o CLIENTE DEVE
+            tentar autenticar o usuário anonimamente (supabase.auth.signInAnonymously())
+            para iniciar a sessão e permitir o salvamento temporário (e isolado) de cálculos.
+            Isso garante o Login Zero-Friction sem exigir cadastro do usuário.
+          -->
+          <a href="./login.html" class="bg-teal-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-teal-700 transition-colors">
+            ACESSAR CALCULADORA AGORA (Grátis)
           </a>
-          <p class="mt-4 text-sm text-gray-500">Sem cartão de crédito. Comece a usar em minutos.</p>
         </div>
       </div>
     </section>
@@ -107,13 +112,13 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M12 21a9 9 0 110-18 9 9 0 010 18z" /></svg>
             </div>
             <h3 class="text-2xl font-bold text-gray-800">Calcule com Confiança e Precisão</h3>
-            <p class="mt-3 text-gray-600">Nossa calculadora de dimensionamento segue os critérios da NBR 5410 para garantir a segurança e a eficiência das suas instalações. Evite desperdício de material e dimensione cabos e disjuntores corretamente em segundos.</p>
+            <p class="mt-3 text-gray-600">Nossa calculadora de dimensionamento segue os critérios da NBR 5410. Obtenha <strong>Prova Técnica</strong> do seu projeto, evite desperdício e blinde sua responsabilidade legal em cada serviço.</p>
           </div>
           <div class="bg-gray-100 p-6 rounded-lg border">
             <div class="font-mono text-sm space-y-2">
-              <p><span class="text-teal-600 font-bold">&gt;</span> Corrente de Projeto (Ib): <span class="font-bold">18.9 A</span></p>
-              <p><span class="text-teal-600 font-bold">&gt;</span> Cabo Sugerido: <span class="font-bold text-xl">4.0 mm²</span></p>
-              <p><span class="text-teal-600 font-bold">&gt;</span> Disjuntor (In): <span class="font-bold text-xl">20 A</span></p>
+              <p><span class="text-teal-600 font-bold">&gt;</span> Corrente de Projeto (Ib): <span class="font-bold">25.0 A</span></p>
+              <p><span class="text-teal-600 font-bold">&gt;</span> Cabo Sugerido: <span class="font-bold text-xl">6.0 mm²</span></p>
+              <p><span class="text-teal-600 font-bold">&gt;</span> Disjuntor (In): <span class="font-bold text-xl">32 A</span></p>
               <p class="text-green-600 font-bold pt-2 border-t mt-2">&gt; Coordenação OK: Ib &lt; In &lt; Iz</p>
             </div>
           </div>
