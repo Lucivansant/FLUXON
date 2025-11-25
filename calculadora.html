@@ -443,8 +443,6 @@ function checkCalculationLimit(currentCount) {
     if (el.resultArea.innerHTML === limitMessage) { // Se a mensagem de limite estava visível, remove-a
         el.resultArea.innerHTML = 'Resultados aparecerão aqui após clicar em "Calcular & Salvar".';
     }
-    console.error('delete err', err);
-    showMsg('Erro ao remover cálculo.', 'error');
   }
 }
 
