@@ -30,6 +30,7 @@
         <a href="clientes.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Clientes</a>
         <a href="orcamentos.html" class="text-sm font-semibold text-teal-600 border-b-2 border-teal-600 pb-1">Orçamentos</a>
         <a href="dashboard.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Dashboard</a>
+        <a href="planos.html" class="text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors">Planos</a>
       </nav>
 
       <div class="flex items-center gap-4 min-w-[150px] justify-end">
@@ -47,6 +48,7 @@
         <a href="clientes.html" class="font-medium text-gray-500 hover:text-teal-600">Clientes</a>
         <a href="orcamentos.html" class="font-semibold text-teal-600">Orçamentos</a>
         <a href="dashboard.html" class="font-medium text-gray-500 hover:text-teal-600">Dashboard</a>
+        <a href="planos.html" class="font-medium text-gray-500 hover:text-teal-600">Planos</a>
     </nav>
   </div>
 
@@ -89,7 +91,7 @@
             </tbody>
           </table>
           <div id="quotes-empty" class="hidden text-center py-8 text-gray-500">Nenhum orçamento cadastrado ainda. Clique em "Criar Orçamento" para começar.</div>
-          <div id="quotes-limit-msg" class="hidden text-center py-4 text-sm text-amber-700 bg-amber-50 rounded-b-lg">Você atingiu o limite de 5 orçamentos no plano gratuito.</div>
+          <div id="quotes-limit-msg" class="hidden text-center py-4 text-sm text-amber-700 bg-amber-50 rounded-b-lg">Você atingiu o limite de 3 orçamentos no plano gratuito.</div>
         </div>
       </div>
     </div>
@@ -367,7 +369,7 @@ const statusStyles = {
 };
 
 let quoteBuilderItems = [];
-const QUOTE_LIMIT = 5;
+const QUOTE_LIMIT = 3;
 
 function toggleModal(show) {
   el.quoteModal.classList.toggle('hidden', !show);
