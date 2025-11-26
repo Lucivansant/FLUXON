@@ -72,6 +72,9 @@
         <p class="text-gray-600 mt-2">Comece gratuitamente e faça o upgrade quando precisar de mais recursos.</p>
       </div>
 
+      <!-- Mensagem de Feedback do Pagamento -->
+      <div id="payment-feedback" class="hidden max-w-4xl mx-auto mb-6 p-4 rounded-md text-sm"></div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         
         <!-- Plano Gratuito -->
@@ -122,6 +125,7 @@ const el = {
   locked: document.getElementById('locked'),
   app: document.getElementById('app'),
   btnUpgrade: document.getElementById('btn-upgrade'),
+  paymentFeedback: document.getElementById('payment-feedback'),
 };
 
 function setLoggedState(user) {
@@ -183,10 +187,32 @@ async function handleUpgrade() {
 el.btnLogout.addEventListener('click', signOut);
 el.btnUpgrade.addEventListener('click', handleUpgrade);
 
+function checkPaymentStatus() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('status');
+
+  if (status === 'success') {
+    el.paymentFeedback.textContent = 'Pagamento iniciado! Assim que o Stripe confirmar, seu plano será atualizado. Isso pode levar alguns instantes.';
+    el.paymentFeedback.className = 'max-w-4xl mx-auto mb-6 p-4 rounded-md text-sm bg-green-100 text-green-800';
+    el.paymentFeedback.classList.remove('hidden');
+  } else if (status === 'cancel') {
+    el.paymentFeedback.textContent = 'O processo de pagamento foi cancelado. Você pode tentar novamente a qualquer momento.';
+    el.paymentFeedback.className = 'max-w-4xl mx-auto mb-6 p-4 rounded-md text-sm bg-amber-100 text-amber-800';
+    el.paymentFeedback.classList.remove('hidden');
+  }
+
+  // Limpa os parâmetros da URL para não mostrar a mensagem novamente se a página for recarregada
+  if (status) {
+    const newUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, newUrl);
+  }
+}
+
 supabase.auth.onAuthStateChange((event, session) => setLoggedState(session?.user ?? null));
 (async function init() {
   const { data } = await supabase.auth.getUser();
   setLoggedState(data.user);
+  checkPaymentStatus(); // Verifica o status do pagamento ao carregar a página
 })();
 </script>
 </body>
