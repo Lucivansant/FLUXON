@@ -174,12 +174,8 @@ async function handleUpgrade() {
 
     if (error) throw error;
 
-    // Abre a página de checkout do Stripe em uma nova aba
-    window.open(data.checkoutUrl, '_blank');
-
-    // Reativa o botão na página original para que o usuário possa continuar navegando
-    el.btnUpgrade.disabled = false;
-    el.btnUpgrade.textContent = 'Fazer Upgrade';
+    // Redireciona o usuário para a página de checkout do Stripe na mesma aba
+    window.location.href = data.checkoutUrl;
 
   } catch (error) {
     alert(`Erro ao iniciar o upgrade: ${error.message}`);
