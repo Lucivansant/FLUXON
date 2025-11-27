@@ -63,6 +63,26 @@
         </div>
       </div>
 
+      <!-- Lista de Usuários e Métricas -->
+      <div class="bg-gray-700 p-6 rounded-lg mt-6">
+        <h2 class="text-xl font-bold mb-4">Estatísticas por Usuário</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-400">
+            <thead class="text-xs text-gray-300 uppercase bg-gray-600">
+              <tr>
+                <th scope="col" class="px-6 py-3">E-mail do Usuário</th>
+                <th scope="col" class="px-6 py-3 text-center">Clientes</th>
+                <th scope="col" class="px-6 py-3 text-center">Orçamentos</th>
+              </tr>
+            </thead>
+            <tbody id="user-metrics-list">
+              <!-- Linhas de usuários serão inseridas aqui pelo JS -->
+              <tr class="bg-gray-700 border-b border-gray-600"><td colspan="3" class="px-6 py-4 text-center">Carregando dados dos usuários...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Lista de Feedbacks -->
       <div class="bg-gray-700 p-6 rounded-lg mt-6">
         <h2 class="text-xl font-bold mb-4">Feedbacks Recebidos</h2>
@@ -90,6 +110,7 @@ const el = {
   totalUsers: document.getElementById('metric-total-users'),
   totalClients: document.getElementById('metric-total-clients'),
   totalQuotes: document.getElementById('metric-total-quotes'),
+  userMetricsList: document.getElementById('user-metrics-list'), // Adicionado
   feedbacksList: document.getElementById('feedbacks-list'),
 };
 
@@ -186,11 +207,41 @@ async function loadFeedbacks() {
   }
 }
 
+async function loadUserMetrics() {
+  try {
+    const { data, error } = await supabase.rpc('get_user_metrics');
+    if (error) throw error;
+
+    const container = el.userMetricsList;
+    container.innerHTML = ''; // Limpa o conteúdo de carregamento
+
+    if (!data || data.length === 0) {
+      container.innerHTML = '<tr class="bg-gray-700 border-b border-gray-600"><td colspan="3" class="px-6 py-4 text-center">Nenhum usuário encontrado.</td></tr>';
+      return;
+    }
+
+    data.forEach(user => {
+      const row = document.createElement('tr');
+      row.className = 'bg-gray-700 border-b border-gray-600';
+      row.innerHTML = `
+        <td class="px-6 py-4 font-medium text-white">${user.user_email}</td>
+        <td class="px-6 py-4 text-center">${user.client_count}</td>
+        <td class="px-6 py-4 text-center">${user.quote_count}</td>
+      `;
+      container.appendChild(row);
+    });
+
+  } catch (error) {
+    el.userMetricsList.innerHTML = `<tr class="bg-gray-700 border-b border-gray-600"><td colspan="3" class="px-6 py-4 text-red-400 text-center">Erro ao carregar métricas de usuário: ${error.message}</td></tr>`;
+  }
+}
+
 function showDashboard() {
   el.loginSection.classList.add('hidden');
   el.dashboardSection.classList.remove('hidden');
   loadDashboardData();
   loadFeedbacks();
+  loadUserMetrics(); // Chama a nova função para carregar as métricas por usuário
 }
 
 function init() {
