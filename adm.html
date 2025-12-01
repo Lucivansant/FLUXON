@@ -63,6 +63,54 @@
         </div>
       </div>
 
+      <!-- Gerenciamento de Indicações -->
+      <div class="bg-gray-700 p-6 rounded-lg mt-6">
+        <h2 class="text-xl font-bold mb-4">Gerenciar Indicações de Produtos</h2>
+        
+        <div id="product-msg" class="mb-4 hidden p-3 rounded text-sm"></div>
+
+        <form id="product-form" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border-b border-gray-600 pb-6">
+          <input type="hidden" id="product-id">
+          <div class="md:col-span-2">
+            <label for="product-title" class="text-sm block mb-1">Título do Produto</label>
+            <input id="product-title" type="text" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+          </div>
+          <div class="md:col-span-2">
+            <label for="product-category" class="text-sm block mb-1">Categoria</label>
+            <select id="product-category" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <option value="iluminacao">Iluminação</option>
+              <option value="tomadas">Tomadas e Interruptores</option>
+              <option value="disjuntores">Disjuntores e Proteção</option>
+              <option value="cabos">Cabos e Fios</option>
+              <option value="infra">Infraestrutura (Eletrodutos, Caixas)</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+          <div>
+            <label for="product-image-url" class="text-sm block mb-1">URL da Imagem</label>
+            <input id="product-image-url" type="url" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+          </div>
+          <div>
+            <label for="product-affiliate-link" class="text-sm block mb-1">Link de Afiliado</label>
+            <input id="product-affiliate-link" type="url" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+          </div>
+          <div class="md:col-span-2">
+            <label for="product-description" class="text-sm block mb-1">Descrição</label>
+            <textarea id="product-description" rows="3" class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+          </div>
+          <div class="md:col-span-2 flex gap-4">
+            <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded">Salvar Produto</button>
+            <button type="button" id="clear-product-form" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold px-4 py-2 rounded">Limpar Formulário</button>
+          </div>
+        </form>
+
+        <h3 class="text-lg font-bold mb-4">Produtos Cadastrados</h3>
+        <div id="products-list" class="space-y-4">
+          <p class="text-gray-400">Carregando produtos...</p>
+        </div>
+
+      </div>
+
       <!-- Lista de Usuários e Métricas -->
       <div class="bg-gray-700 p-6 rounded-lg mt-6">
         <h2 class="text-xl font-bold mb-4">Estatísticas por Usuário</h2>
@@ -112,6 +160,17 @@ const el = {
   totalQuotes: document.getElementById('metric-total-quotes'),
   userMetricsList: document.getElementById('user-metrics-list'), // Adicionado
   feedbacksList: document.getElementById('feedbacks-list'),
+  // Elementos do formulário de produtos
+  productForm: document.getElementById('product-form'),
+  productId: document.getElementById('product-id'),
+  productTitle: document.getElementById('product-title'),
+  productCategory: document.getElementById('product-category'),
+  productImageUrl: document.getElementById('product-image-url'),
+  productAffiliateLink: document.getElementById('product-affiliate-link'),
+  productDescription: document.getElementById('product-description'),
+  productsList: document.getElementById('products-list'),
+  productMsg: document.getElementById('product-msg'),
+  clearProductFormBtn: document.getElementById('clear-product-form'),
 };
 
 function showAdminMsg(text, isError = false) {
@@ -119,6 +178,17 @@ function showAdminMsg(text, isError = false) {
   el.msg.className = 'mb-4 p-3 rounded text-sm';
   el.msg.classList.add(isError ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800');
   el.msg.classList.remove('hidden');
+}
+function showProductMsg(text, isError = false) {
+  el.productMsg.textContent = text;
+  el.productMsg.className = 'mb-4 p-3 rounded text-sm';
+  if (isError) {
+    el.productMsg.classList.add('bg-red-200', 'text-red-800');
+  } else {
+    el.productMsg.classList.add('bg-green-200', 'text-green-800');
+  }
+  el.productMsg.classList.remove('hidden');
+  setTimeout(() => el.productMsg.classList.add('hidden'), 3000);
 }
 
 async function handleAdminLogin(e) {
@@ -236,12 +306,125 @@ async function loadUserMetrics() {
   }
 }
 
+function clearProductForm() {
+  el.productForm.reset();
+  el.productId.value = '';
+  el.productCategory.value = 'iluminacao'; // Reseta para a primeira opção
+}
+
+async function handleProductSave(e) {
+  e.preventDefault();
+  const productData = {
+    title: el.productTitle.value,
+    image_url: el.productImageUrl.value,
+    category: el.productCategory.value,
+    affiliate_link: el.productAffiliateLink.value,
+    description: el.productDescription.value,
+  };
+  const id = el.productId.value;
+
+  try {
+    let error;
+    if (id) {
+      // Atualiza um produto existente
+      ({ error } = await supabase.from('recommended_products').update(productData).eq('id', id));
+    } else {
+      // Insere um novo produto
+      ({ error } = await supabase.from('recommended_products').insert(productData));
+    }
+
+    if (error) throw error;
+
+    showProductMsg(`Produto ${id ? 'atualizado' : 'salvo'} com sucesso!`, false);
+    clearProductForm();
+    loadProducts(); // Recarrega a lista
+
+  } catch (error) {
+    showProductMsg('Erro ao salvar produto: ' + error.message, true);
+  }
+}
+
+async function loadProducts() {
+  try {
+    const { data, error } = await supabase
+      .from('recommended_products')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    const container = el.productsList;
+    container.innerHTML = '';
+
+    if (!data || data.length === 0) {
+      container.innerHTML = '<p class="text-gray-400">Nenhum produto cadastrado ainda.</p>';
+      return;
+    }
+
+    data.forEach(product => {
+      const productEl = document.createElement('div');
+      productEl.className = 'bg-gray-800 p-3 rounded-lg border border-gray-600 flex items-center justify-between gap-4';
+      productEl.innerHTML = `
+        <div class="flex items-center gap-4">
+          <img src="${product.image_url}" alt="${product.title}" class="w-16 h-16 object-cover rounded">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold uppercase bg-teal-800 text-teal-200 px-2 py-0.5 rounded">${product.category}</span>
+              <div class="font-bold text-white">${product.title}</div>
+            </div>
+            <a href="${product.affiliate_link}" target="_blank" class="text-xs text-cyan-400 hover:underline">${product.affiliate_link}</a>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button data-action="edit" data-product='${JSON.stringify(product)}' class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded">Editar</button>
+          <button data-action="delete" data-id="${product.id}" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1 rounded">Excluir</button>
+        </div>
+      `;
+      container.appendChild(productEl);
+    });
+
+  } catch (error) {
+    el.productsList.innerHTML = `<p class="text-red-400">Erro ao carregar produtos: ${error.message}</p>`;
+  }
+}
+
+async function handleProductActions(e) {
+  const target = e.target;
+  const action = target.dataset.action;
+
+  if (action === 'edit') {
+    const product = JSON.parse(target.dataset.product);
+    el.productId.value = product.id;
+    el.productTitle.value = product.title;
+    el.productCategory.value = product.category || 'outros'; // Garante um valor padrão
+    el.productImageUrl.value = product.image_url;
+    el.productAffiliateLink.value = product.affiliate_link;
+    el.productDescription.value = product.description;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (action === 'delete') {
+    const id = target.dataset.id;
+    if (confirm('Tem certeza que deseja excluir este produto?')) {
+      try {
+        const { error } = await supabase.from('recommended_products').delete().eq('id', id);
+        if (error) throw error;
+        showProductMsg('Produto excluído com sucesso!', false);
+        loadProducts();
+      } catch (error) {
+        showProductMsg('Erro ao excluir produto: ' + error.message, true);
+      }
+    }
+  }
+}
+
 function showDashboard() {
   el.loginSection.classList.add('hidden');
   el.dashboardSection.classList.remove('hidden');
   loadDashboardData();
   loadFeedbacks();
   loadUserMetrics(); // Chama a nova função para carregar as métricas por usuário
+  loadProducts();
 }
 
 function init() {
@@ -255,6 +438,9 @@ function init() {
 
 el.loginForm.addEventListener('submit', handleAdminLogin);
 el.logoutBtn.addEventListener('click', handleAdminLogout);
+el.productForm.addEventListener('submit', handleProductSave);
+el.clearProductFormBtn.addEventListener('click', clearProductForm);
+el.productsList.addEventListener('click', handleProductActions);
 
 init();
 </script>
