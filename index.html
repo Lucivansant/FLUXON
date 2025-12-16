@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fluxon.Click — A Plataforma Completa para Eletricistas</title>
+  <title>ProjectGrid — A Plataforma Completa para Eletricistas</title>
 
   <!-- Favicon (ícone da aba do navegador) -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2210%22 fill=%22%23FBBF24%22/><text x=%2250%22 y=%2250%22 font-size=%2260%22 font-weight=%22bold%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%231A2E2E%22>F</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2210%22 fill=%22%234F46E5%22/><g transform=%22translate(15,15) scale(3.5)%22><path d=%22M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z%22 fill=%22%23FFFFFF%22 stroke=%22%23FFFFFF%22 stroke-width=%221%22/></g></svg>">
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -24,9 +24,11 @@
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <a href="index.html" class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded bg-amber-400 flex items-center justify-center font-bold text-teal-800">F</div>
+          <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-white"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+          </div>
           <div>
-            <div class="font-bold text-lg">Fluxon.Click</div>
+            <div class="font-bold text-lg">ProjectGrid</div>
             <div class="text-xs text-gray-500">Plataforma para Eletricistas</div>
           </div>
         </a>
@@ -34,44 +36,114 @@
 
       <!-- Menu de Navegação da Landing Page -->
       <nav class="hidden lg:flex items-center gap-8">
-        <a href="#features" class="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors">Funcionalidades</a>
-        <a href="#testimonials" class="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors">Depoimentos</a>
-        <a href="#cta" class="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors">Comece Agora</a>
+        <a href="#features" class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors">Funcionalidades</a>
+        <a href="#testimonials" class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors">Depoimentos</a>
+        <a href="#cta" class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors">Comece Agora</a>
       </nav>
 
       <div class="flex items-center gap-4 min-w-[150px] justify-end">
-        <a href="login.html" class="hidden sm:block text-sm font-medium text-gray-600 hover:text-teal-700">Login</a>
-        <a href="login.html?action=signup" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded font-semibold">Cadastre-se Grátis</a>
+        <a href="login.html" class="hidden sm:block text-sm font-medium text-gray-600 hover:text-indigo-700">Login</a>
+        <a href="login.html?action=signup" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded font-semibold">Cadastre-se Grátis</a>
       </div>
     </div>
   </header>
 
   <main>
     <!-- Hero Section -->
-    <section class="bg-gradient-to-b from-white to-amber-50 shadow-md">
-      <div class="max-w-6xl mx-auto px-6 py-24 text-center">
-        <h1 class="text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight max-w-4xl mx-auto">
+    <section class="relative bg-gray-900">
+      <!-- Grid e Efeito de Brilho -->
+      <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,rgba(121,40,202,0.25),rgba(255,255,255,0))]"></div>
+
+      <div class="relative max-w-6xl mx-auto px-6 pt-24 pb-12 text-center">
+        <h1 class="relative text-4xl lg:text-5xl font-extrabold text-white leading-tight max-w-4xl mx-auto">
           Otimize seu trabalho. Impressione seus clientes.
         </h1>
-        <p class="mt-6 text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto">
-          Calcule projetos pela NBR 5410 e crie orçamentos profissionais que fecham negócio.
+        <p class="relative mt-6 text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto">
+          Calcule projetos conforme a NBR 5410 e crie orçamentos profissionais. Tudo em um só lugar.
         </p>
-        <div class="mt-10">
+        <div class="relative mt-10">
           <!-- 
             IMPORTANTE: Ao carregar a página /calculadora via este botão, o CLIENTE DEVE
             tentar autenticar o usuário anonimamente (supabase.auth.signInAnonymously())
             para iniciar a sessão e permitir o salvamento temporário (e isolado) de cálculos.
             Isso garante o Login Zero-Friction sem exigir cadastro do usuário.
           -->
-          <a href="./login.html" class="bg-amber-500 text-gray-900 font-bold text-lg px-8 py-4 rounded-lg hover:bg-amber-600 transition-colors shadow-lg transform hover:scale-105">
+          <a href="./login.html" class="bg-indigo-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-indigo-700 transition-colors shadow-lg transform hover:scale-105">
             ACESSAR CALCULADORA AGORA (Grátis)
           </a>
+        </div>
+
+        <!-- App Mockup Section -->
+        <div class="relative mt-20">
+        <!-- The mockup frame -->
+        <div class="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+          <!-- Mockup Header -->
+          <div class="h-11 bg-gray-100 border-b border-gray-200 flex items-center px-4 gap-2">
+            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+          </div>
+          
+          <!-- Mockup Body -->
+          <div class="flex flex-col h-[400px] md:h-[550px] bg-gray-50">
+            <!-- Mockup App Header (Navegação Real) -->
+            <div class="bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
+              <!-- Logo -->
+              <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-white"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+                  </div>
+                  <div class="font-bold text-sm hidden sm:block">ProjectGrid</div>
+              </div>
+              <!-- Nav Links -->
+              <nav class="hidden md:flex items-center gap-5 text-xs font-medium text-gray-500">
+                  <a href="#" class="text-indigo-600 border-b-2 border-indigo-600 pb-2">Dashboard</a>
+                  <a href="#" class="hover:text-indigo-600 pb-2">Dimensionamento</a>
+                  <a href="#" class="hover:text-indigo-600 pb-2">Orçamentos</a>
+                  <a href="#" class="hover:text-indigo-600 pb-2">Clientes</a>
+                  <a href="#" class="hover:text-indigo-600 pb-2">Indicações</a>
+              </nav>
+              <!-- User info -->
+              <div class="flex items-center gap-2">
+                  <div class="text-xs text-gray-600 hidden sm:block">lucivan</div>
+                  <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3 py-1.5 rounded-md font-semibold">Sair</button>
+              </div>
+            </div>
+
+            <!-- Mockup Main Content -->
+            <div class="flex-1 p-6 overflow-auto">
+              <h2 class="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-lg border shadow-sm"><div class="text-xs text-gray-500">Faturamento</div><div class="text-xl font-bold text-green-600">R$ 7.280</div></div>
+                <div class="bg-white p-4 rounded-lg border shadow-sm"><div class="text-xs text-gray-500">Clientes</div><div class="text-xl font-bold text-indigo-700">23</div></div>
+                <div class="bg-white p-4 rounded-lg border shadow-sm"><div class="text-xs text-gray-500">Pendentes</div><div class="text-xl font-bold text-amber-600">4</div></div>
+                <div class="bg-white p-4 rounded-lg border shadow-sm"><div class="text-xs text-gray-500">Aprovados</div><div class="text-xl font-bold text-green-600">9</div></div>
+              </div>
+              <h3 class="text-lg font-bold text-gray-800 mt-8 mb-4">Orçamentos Recentes</h3>
+              <div class="space-y-3">
+                <div class="p-3 border rounded-lg bg-white shadow-sm">
+                  <div class="flex justify-between items-center"><span class="font-semibold">#ORC-0125</span><span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full">Aprovado</span></div>
+                  <div class="text-sm text-gray-500 mt-1">Residência J. Silva - R$ 4.500,00</div>
+                </div>
+                <div class="p-3 border rounded-lg bg-white shadow-sm">
+                  <div class="flex justify-between items-center"><span class="font-semibold">#ORC-0126</span><span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded-full">Pendente</span></div>
+                  <div class="text-sm text-gray-500 mt-1">Loja Centro - R$ 12.800,00</div>
+                </div>
+                <div class="p-3 border rounded-lg bg-white shadow-sm">
+                  <div class="flex justify-between items-center"><span class="font-semibold">#ORC-0127</span><span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-1 rounded-full">Recusado</span></div>
+                  <div class="text-sm text-gray-500 mt-1">Reforma Apartamento - R$ 2.100,00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     </section>
 
     <!-- Social Proof / Logos -->
-    <div class="py-12 bg-gray-50">
+    <div class="py-12 bg-white">
       <div class="max-w-4xl mx-auto px-6">
         <p class="text-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
           Ferramentas baseadas nas normas e melhores práticas do mercado
@@ -94,83 +166,109 @@
     </div>
   </main>
 
-  <!-- Nova Seção de Vendas -->
-  <section id="features" class="bg-gray-100 py-16 lg:py-24">
-    <div class="max-w-5xl mx-auto px-6">
+  <!-- Seção de Funcionalidades (Features) -->
+  <section id="features" class="relative bg-gray-50 py-16 lg:py-24">
+    <!-- Fundo de Grid Sutil -->
+    <div class="absolute inset-0 z-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
 
-      <div class="text-center mb-16">
+    <!-- Conteúdo da Seção -->
+    <div class="relative z-10 max-w-6xl mx-auto px-6 space-y-16">
+
+      <div class="text-center">
         <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900">Uma Plataforma Completa para o Eletricista Moderno</h2>
-        <p class="mt-4 text-lg text-gray-600">Deixe as planilhas e anotações para trás. Centralize, agilize e profissionalize seu trabalho diário.</p>
+        <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Deixe as planilhas e anotações para trás. Centralize, agilize e profissionalize seu trabalho diário com ferramentas criadas para você.</p>
       </div>
 
-      <div class="space-y-16">
-
-        <!-- Feature 1: Calculadora -->
-        <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div class="text-center md:text-left">
-            <div class="inline-flex items-center justify-center p-3 bg-teal-100 text-teal-700 rounded-lg mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M12 21a9 9 0 110-18 9 9 0 010 18z" /></svg>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800">Calcule com Confiança e Precisão</h3>
-            <p class="mt-3 text-gray-600">Agilize seus dimensionamentos usando os critérios da NBR 5410. Tenha uma <strong>base técnica</strong> para evitar desperdício de material e justificar suas escolhas para o cliente com mais segurança.</p>
+      <!-- Feature 1: Calculadora -->
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="inline-flex items-center justify-center p-3 bg-indigo-100 text-indigo-600 rounded-lg mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M12 21a9 9 0 110-18 9 9 0 010 18z" /></svg>
           </div>
-          <div class="bg-white p-6 rounded-lg border shadow-md">
-            <div class="font-mono text-sm space-y-2">
-              <p><span class="text-teal-600 font-bold">&gt;</span> Corrente de Projeto (Ib): <span class="font-bold">25.0 A</span></p>
-              <p><span class="text-teal-600 font-bold">&gt;</span> Cabo Sugerido: <span class="font-bold text-xl">6.0 mm²</span></p>
-              <p><span class="text-teal-600 font-bold">&gt;</span> Disjuntor (In): <span class="font-bold text-xl">32 A</span></p>
-              <p class="text-green-600 font-bold pt-2 border-t mt-2">&gt; Coordenação OK: Ib &lt; In &lt; Iz</p>
-            </div>
-          </div>
+          <h3 class="text-2xl font-bold text-gray-900">Calcule com Confiança e Precisão</h3>
+          <p class="mt-3 text-gray-600">Agilize seus dimensionamentos usando os critérios da NBR 5410. Tenha uma <strong>base técnica</strong> para evitar desperdício de material e justificar suas escolhas para o cliente com mais segurança.</p>
         </div>
-
-        <!-- Feature 2: Orçamentos -->
-        <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div class="order-2 md:order-1 text-center md:text-left">
-            <div class="inline-flex items-center justify-center p-3 bg-amber-100 text-amber-700 rounded-lg mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800">Crie Orçamentos Profissionais em Minutos</h3>
-            <p class="mt-3 text-gray-600">Utilize nosso construtor de orçamentos para selecionar serviços de tabelas pré-cadastradas e gerar uma proposta detalhada e convincente para seu cliente. Acompanhe o status de cada orçamento e nunca mais perca uma oportunidade.</p>
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+          <div class="h-11 bg-gray-100 border-b border-gray-200 flex items-center px-4 gap-2">
+            <div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div>
           </div>
-          <div class="order-1 md:order-2 bg-white p-6 rounded-lg border shadow-md">
-            <div class="space-y-3">
-              <div class="p-3 border rounded-lg bg-white shadow-sm">
-                <div class="flex justify-between items-center"><span class="font-semibold">#ORC-0125</span><span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full">Aprovado</span></div>
-                <div class="text-sm text-gray-500 mt-1">Residência J. Silva - R$ 4.500,00</div>
+          <div class="p-6 bg-white">
+            <div class="space-y-4">
+              <div>
+                <label class="text-xs font-medium text-gray-500">Potência Total (W)</label>
+                <div class="mt-1 p-2 border rounded-md bg-gray-50 text-gray-800">5500</div>
               </div>
-              <div class="p-3 border rounded-lg bg-white shadow-sm">
-                <div class="flex justify-between items-center"><span class="font-semibold">#ORC-0126</span><span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded-full">Pendente</span></div>
-                <div class="text-sm text-gray-500 mt-1">Loja Centro - R$ 12.800,00</div>
+              <div>
+                <label class="text-xs font-medium text-gray-500">Comprimento (m)</label>
+                <div class="mt-1 p-2 border rounded-md bg-gray-50 text-gray-800">15</div>
+              </div>
+              <div class="border-t pt-4 mt-4">
+                <div class="p-3 rounded-lg text-center bg-green-100 text-green-800 border border-green-200">
+                  <div class="font-bold text-sm">Coordenação OK: Ib &lt; In &lt; Iz</div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-3">
+                  <div class="text-center"><div class="text-xs text-gray-500">Cabo Sugerido</div><div class="text-2xl font-extrabold text-indigo-700">6 mm²</div></div>
+                  <div class="text-center"><div class="text-xs text-gray-500">Disjuntor</div><div class="text-2xl font-extrabold text-indigo-700">32 A</div></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Feature 3: Dashboard -->
-        <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div class="text-center md:text-left">
-            <div class="inline-flex items-center justify-center p-3 bg-indigo-100 text-indigo-700 rounded-lg mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800">Tenha uma Visão Clara do seu Negócio</h3>
-            <p class="mt-3 text-gray-600">O dashboard centraliza suas métricas mais importantes. Acompanhe seu faturamento mensal, o número de clientes e os projetos aprovados. Tome decisões baseadas em dados e veja seu negócio crescer de forma organizada.</p>
+      <!-- Feature 2: Orçamentos -->
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="inline-flex items-center justify-center p-3 bg-indigo-100 text-indigo-600 rounded-lg mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
           </div>
-          <div class="bg-white p-6 rounded-lg border shadow-md grid grid-cols-2 gap-6">
-            <div class="bg-white p-4 rounded-lg text-center shadow-sm"><div class="text-sm text-gray-500">Faturamento</div><div class="text-2xl font-bold text-green-600">R$ 7.280</div></div>
-            <div class="bg-white p-4 rounded-lg text-center shadow-sm"><div class="text-sm text-gray-500">Clientes</div><div class="text-2xl font-bold text-teal-700">23</div></div>
-            <div class="bg-white p-4 rounded-lg text-center shadow-sm"><div class="text-sm text-gray-500">Pendentes</div><div class="text-2xl font-bold text-amber-600">4</div></div>
-            <div class="bg-white p-4 rounded-lg text-center shadow-sm"><div class="text-sm text-gray-500">Aprovados</div><div class="text-2xl font-bold text-indigo-600">9</div></div>
+          <h3 class="text-2xl font-bold text-gray-900">Crie Orçamentos Profissionais em Minutos</h3>
+          <p class="mt-3 text-gray-600">Utilize nosso construtor para selecionar serviços de tabelas pré-cadastradas e gerar uma proposta detalhada e convincente. Acompanhe o status e nunca mais perca uma oportunidade.</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+          <div class="h-11 bg-gray-100 border-b border-gray-200 flex items-center px-4 gap-2">
+            <div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div>
+          </div>
+          <div class="p-6 bg-white space-y-4">
+            <div class="p-3 border rounded-lg bg-white shadow-sm">
+              <div class="flex justify-between items-center"><span class="font-semibold">#ORC-0125</span><span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-full">Aprovado</span></div>
+              <div class="text-sm text-gray-500 mt-1">Residência J. Silva - R$ 4.500,00</div>
+            </div>
+            <div class="p-3 border rounded-lg bg-white shadow-sm">
+              <div class="flex justify-between items-center"><span class="font-semibold">#ORC-0126</span><span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded-full">Pendente</span></div>
+              <div class="text-sm text-gray-500 mt-1">Loja Centro - R$ 12.800,00</div>
+            </div>
           </div>
         </div>
+      </div>
 
+      <!-- Feature 3: Dashboard -->
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="inline-flex items-center justify-center p-3 bg-indigo-100 text-indigo-600 rounded-lg mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900">Tenha uma Visão Clara do seu Negócio</h3>
+          <p class="mt-3 text-gray-600">O dashboard centraliza suas métricas mais importantes. Acompanhe seu faturamento, o número de clientes e os projetos aprovados. Tome decisões baseadas em dados e veja seu negócio crescer.</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+          <div class="h-11 bg-gray-100 border-b border-gray-200 flex items-center px-4 gap-2">
+            <div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div>
+          </div>
+          <div class="p-6 bg-white grid grid-cols-2 gap-6">
+            <div class="bg-gray-50 p-4 rounded-lg text-center border"><div class="text-sm text-gray-500">Faturamento</div><div class="text-2xl font-bold text-green-600">R$ 7.280</div></div>
+            <div class="bg-gray-50 p-4 rounded-lg text-center border"><div class="text-sm text-gray-500">Clientes</div><div class="text-2xl font-bold text-indigo-700">23</div></div>
+            <div class="bg-gray-50 p-4 rounded-lg text-center border"><div class="text-sm text-gray-500">Pendentes</div><div class="text-2xl font-bold text-amber-600">4</div></div>
+            <div class="bg-gray-50 p-4 rounded-lg text-center border"><div class="text-sm text-gray-500">Aprovados</div><div class="text-2xl font-bold text-green-600">9</div></div>
+          </div>
+        </div>
       </div>
 
       <!-- Final CTA -->
       <div id="cta" class="text-center mt-24">
         <h3 class="text-2xl lg:text-3xl font-extrabold text-gray-900">Pronto para otimizar seu trabalho?</h3>
         <p class="mt-3 text-lg text-gray-600">Crie sua conta gratuita e tenha acesso a todas as ferramentas agora mesmo.</p>
-        <a href="login.html?action=signup" class="mt-8 inline-block bg-amber-500 text-gray-900 font-bold text-lg px-8 py-4 rounded-lg hover:bg-amber-600 transition-colors shadow-lg transform hover:scale-105">
+        <a href="login.html?action=signup" class="mt-8 inline-block bg-indigo-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-indigo-700 transition-colors shadow-lg transform hover:scale-105">
           Começar Agora
         </a>
       </div>
@@ -178,16 +276,16 @@
     </div>
   </section>
 
-  <!-- Seção de Depoimentos -->
-  <section id="testimonials" class="bg-teal-50 py-16 lg:py-24">
+  <!-- Seção de Depoimentos (agora com fundo branco para seguir o estilo clean) -->
+  <section id="testimonials" class="bg-white py-16 lg:py-24">
     <div class="max-w-5xl mx-auto px-6">
       <div class="text-center">
-        <h2 class="text-3xl font-extrabold text-gray-900">O que os eletricistas estão dizendo</h2>
-        <p class="mt-4 text-lg text-gray-600">Veja como a Fluxon está transformando o dia a dia de profissionais como você.</p>
+        <h2 class="text-3xl font-extrabold text-gray-900">O que os eletricistas estão dizendo sobre o ProjectGrid</h2>
+        <p class="mt-4 text-lg text-gray-600">Veja como a nossa plataforma está transformando o dia a dia de profissionais como você.</p>
       </div>
       <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Depoimento 1 -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="bg-gray-50 border p-6 rounded-lg">
           <p class="text-gray-600">"A calculadora de cabos é uma mão na roda. Economizo tempo e tenho mais segurança nos meus projetos. A gestão de clientes e orçamentos no mesmo lugar é sensacional."</p>
           <div class="mt-4 flex items-center">
             <div class="font-bold text-gray-900">João Carlos M.</div>
@@ -195,7 +293,7 @@
           </div>
         </div>
         <!-- Depoimento 2 -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="bg-gray-50 border p-6 rounded-lg">
           <p class="text-gray-600">"Finalmente uma ferramenta que entende a nossa rotina. Consigo criar e enviar orçamentos profissionais direto do celular, na frente do cliente. Isso passa muita credibilidade."</p>
           <div class="mt-4 flex items-center">
             <div class="font-bold text-gray-900">Ricardo Alves</div>
@@ -203,7 +301,7 @@
           </div>
         </div>
         <!-- Depoimento 3 -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="bg-gray-50 border p-6 rounded-lg">
           <p class="text-gray-600">"O dashboard me deu uma visão clara do meu faturamento. Antes, eu me perdia em planilhas. Agora, sei exatamente como está a saúde do meu negócio e onde preciso focar."</p>
           <div class="mt-4 flex items-center">
             <div class="font-bold text-gray-900">Fernanda Lima</div>
@@ -218,22 +316,25 @@
   <footer class="bg-gray-800 text-white">
     <div class="max-w-6xl mx-auto px-6 py-12">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div>
-          <h3 class="font-bold text-lg">Fluxon.Click</h3>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-white"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+          </div>
+          <h3 class="font-bold text-lg">ProjectGrid</h3>
           <p class="text-sm text-gray-400 mt-2">A plataforma completa para o eletricista profissional.</p>
         </div>
         <div class="text-sm">
           <h4 class="font-semibold uppercase tracking-wider text-gray-400">Links</h4>
-          <a href="politica-de-privacidade.html" class="block mt-2 hover:text-amber-400">Política de Privacidade</a>
-          <a href="termos-de-uso.html" class="block mt-2 hover:text-amber-400">Termos de Uso</a>
+          <a href="politica-de-privacidade.html" class="block mt-2 hover:text-indigo-300">Política de Privacidade</a>
+          <a href="termos-de-uso.html" class="block mt-2 hover:text-indigo-300">Termos de Uso</a>
         </div>
         <div class="text-sm bg-gray-700 p-4 rounded-lg">
-          <h4 class="font-semibold uppercase tracking-wider text-amber-400">Aviso Importante</h4>
+          <h4 class="font-semibold uppercase tracking-wider text-gray-400">Aviso Importante</h4>
           <p class="mt-2 text-gray-300">As ferramentas e cálculos fornecidos são para fins informativos e educacionais. É imprescindível que todos os projetos sejam validados por um profissional qualificado e sigam as normas técnicas vigentes (NBR 5410 e outras) antes da execução.</p>
         </div>
       </div>
       <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
-        &copy; 2024 Fluxon.Click. Todos os direitos reservados.
+        &copy; 2024 ProjectGrid. Todos os direitos reservados.
       </div>
     </div>
   </footer>

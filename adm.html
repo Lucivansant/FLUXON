@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Fluxon</title>
+  <title>Admin — ProjectGrid</title>
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2210%22 fill=%22%23FBBF24%22/><text x=%2250%22 y=%2250%22 font-size=%2260%22 font-weight=%22bold%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%231A2E2E%22>F</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2210%22 fill=%22%234F46E5%22/><g transform=%22translate(15,15) scale(3.5)%22><path d=%22M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z%22 fill=%22%23FFFFFF%22 stroke=%22%23FFFFFF%22 stroke-width=%221%22/></g></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
 </head>
@@ -15,7 +15,9 @@
   <div id="admin-login-section" class="flex items-center justify-center min-h-screen">
     <div class="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-sm">
       <div class="flex items-center gap-3 mb-6 justify-center">
-        <div class="w-10 h-10 rounded bg-amber-400 flex items-center justify-center font-bold text-teal-800">F</div>
+        <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-white"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+        </div>
         <h2 class="text-2xl font-extrabold text-white">Painel Administrativo</h2>
       </div>
 
@@ -24,13 +26,13 @@
       <form id="admin-login-form" class="space-y-4">
         <div>
           <label for="admin-username" class="text-sm block mb-1">Usuário</label>
-          <input id="admin-username" type="text" required class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500" />
+          <input id="admin-username" type="text" required class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
         </div>
         <div>
           <label for="admin-password" class="text-sm block mb-1">Senha</label>
-          <input id="admin-password" type="password" required class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500" />
+          <input id="admin-password" type="password" required class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
         </div>
-        <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded">Entrar</button>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded">Entrar</button>
       </form>
     </div>
   </div>
@@ -73,11 +75,11 @@
           <input type="hidden" id="product-id">
           <div class="md:col-span-2">
             <label for="product-title" class="text-sm block mb-1">Título do Produto</label>
-            <input id="product-title" type="text" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <input id="product-title" type="text" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
           <div class="md:col-span-2">
             <label for="product-category" class="text-sm block mb-1">Categoria</label>
-            <select id="product-category" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <select id="product-category" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
               <option value="iluminacao">Iluminação</option>
               <option value="tomadas">Tomadas e Interruptores</option>
               <option value="disjuntores">Disjuntores e Proteção</option>
@@ -88,18 +90,18 @@
           </div>
           <div>
             <label for="product-image-url" class="text-sm block mb-1">URL da Imagem</label>
-            <input id="product-image-url" type="url" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <input id="product-image-url" type="url" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
           <div>
             <label for="product-affiliate-link" class="text-sm block mb-1">Link de Afiliado</label>
-            <input id="product-affiliate-link" type="url" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <input id="product-affiliate-link" type="url" required class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
           <div class="md:col-span-2">
             <label for="product-description" class="text-sm block mb-1">Descrição</label>
-            <textarea id="product-description" rows="3" class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+            <textarea id="product-description" rows="3" class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
           </div>
           <div class="md:col-span-2 flex gap-4">
-            <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded">Salvar Produto</button>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded">Salvar Produto</button>
             <button type="button" id="clear-product-form" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold px-4 py-2 rounded">Limpar Formulário</button>
           </div>
         </form>
@@ -369,7 +371,7 @@ async function loadProducts() {
           <img src="${product.image_url}" alt="${product.title}" class="w-16 h-16 object-cover rounded">
           <div>
             <div class="flex items-center gap-2">
-              <span class="text-xs font-bold uppercase bg-teal-800 text-teal-200 px-2 py-0.5 rounded">${product.category}</span>
+              <span class="text-xs font-bold uppercase bg-indigo-800 text-indigo-200 px-2 py-0.5 rounded">${product.category}</span>
               <div class="font-bold text-white">${product.title}</div>
             </div>
             <a href="${product.affiliate_link}" target="_blank" class="text-xs text-cyan-400 hover:underline">${product.affiliate_link}</a>
